@@ -1,0 +1,22 @@
+{
+  "name": "carrier-quote-engine",
+  "version": "1.0.0",
+  "description": "Logistics Freight & Auto Transport Instant Quotation, Booking & 50% Deposit System",
+  "main": "api/create-deposit-checkout.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.6",
+    "express": "^5.3.0",
+    "nodemailer": "^6.10.0",
+    "stripe": "^17.7.0"
+  },
+  "devDependencies": {
+    "dotenv": "^16.4.7"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
