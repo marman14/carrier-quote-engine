@@ -453,25 +453,39 @@ function goToStep(step) {
   b2.className = 'w-6 h-6 rounded-full bg-slate-700 text-slate-300 flex items-center justify-center text-xs';
   b3.className = 'w-6 h-6 rounded-full bg-slate-700 text-slate-300 flex items-center justify-center text-xs';
 
+  // Update Mobile Progress Bar
+  const mobStepText = document.getElementById('mobileStepText');
+  const mobStepPct = document.getElementById('mobileStepPct');
+  const mobProgressBar = document.getElementById('mobileProgressBar');
+
   if (step === 1) {
     s1.classList.remove('hidden');
-    p1.className = 'flex items-center space-x-2 text-blue-400 font-bold';
+    p1.className = 'flex items-center space-x-2 text-blue-400 font-bold min-w-0';
+    if (mobStepText) mobStepText.textContent = 'Step 1 of 3: Route & Mileage';
+    if (mobStepPct) mobStepPct.textContent = '33%';
+    if (mobProgressBar) mobProgressBar.style.width = '33%';
   } else if (step === 2) {
     s2.classList.remove('hidden');
-    p1.className = 'flex items-center space-x-2 text-emerald-400 font-bold';
-    p2.className = 'flex items-center space-x-2 text-blue-400 font-bold';
-    b2.className = 'w-6 h-6 rounded-full bg-blue-600 text-white flex items-center justify-center text-xs';
+    p1.className = 'flex items-center space-x-2 text-emerald-400 font-bold min-w-0';
+    p2.className = 'flex items-center space-x-2 text-blue-400 font-bold min-w-0';
+    b2.className = 'w-6 h-6 rounded-full bg-blue-600 text-white flex items-center justify-center text-xs shrink-0';
+    if (mobStepText) mobStepText.textContent = 'Step 2 of 3: Cargo Specifications';
+    if (mobStepPct) mobStepPct.textContent = '66%';
+    if (mobProgressBar) mobProgressBar.style.width = '66%';
   } else if (step === 3) {
     recalculate();
     s3.classList.remove('hidden');
-    p1.className = 'flex items-center space-x-2 text-emerald-400 font-bold';
-    p2.className = 'flex items-center space-x-2 text-emerald-400 font-bold';
-    p3.className = 'flex items-center space-x-2 text-blue-400 font-bold';
-    b2.className = 'w-6 h-6 rounded-full bg-emerald-600 text-white flex items-center justify-center text-xs';
-    b3.className = 'w-6 h-6 rounded-full bg-blue-600 text-white flex items-center justify-center text-xs';
+    p1.className = 'flex items-center space-x-2 text-emerald-400 font-bold min-w-0';
+    p2.className = 'flex items-center space-x-2 text-emerald-400 font-bold min-w-0';
+    p3.className = 'flex items-center space-x-2 text-blue-400 font-bold min-w-0';
+    b2.className = 'w-6 h-6 rounded-full bg-emerald-600 text-white flex items-center justify-center text-xs shrink-0';
+    b3.className = 'w-6 h-6 rounded-full bg-blue-600 text-white flex items-center justify-center text-xs shrink-0';
+    if (mobStepText) mobStepText.textContent = 'Step 3 of 3: Speed & 50% Deposit';
+    if (mobStepPct) mobStepPct.textContent = '100%';
+    if (mobProgressBar) mobProgressBar.style.width = '100%';
   }
 
-  window.scrollTo({ top: 120, behavior: 'smooth' });
+  window.scrollTo({ top: 100, behavior: 'smooth' });
   lucide.createIcons();
 }
 
@@ -1197,6 +1211,11 @@ function switchTab(tabId) {
   const btnTracker = document.getElementById('navBtnTracker');
   const btnAdmin = document.getElementById('navBtnAdmin');
 
+  // Mobile nav buttons
+  const mobQuote = document.getElementById('mobNavQuote');
+  const mobTracker = document.getElementById('mobNavTracker');
+  const mobAdmin = document.getElementById('mobNavAdmin');
+
   secQuote.classList.add('hidden');
   secTracker.classList.add('hidden');
   secAdmin.classList.add('hidden');
@@ -1205,15 +1224,22 @@ function switchTab(tabId) {
   btnTracker.className = 'px-3.5 py-2 rounded-lg text-xs font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition flex items-center gap-1.5';
   btnAdmin.className = 'px-3.5 py-2 rounded-lg text-xs font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition flex items-center gap-1.5';
 
+  if (mobQuote) mobQuote.className = 'py-1.5 px-2 rounded-md text-slate-600 hover:bg-slate-200 flex items-center justify-center gap-1 transition';
+  if (mobTracker) mobTracker.className = 'py-1.5 px-2 rounded-md text-slate-600 hover:bg-slate-200 flex items-center justify-center gap-1 transition';
+  if (mobAdmin) mobAdmin.className = 'py-1.5 px-2 rounded-md text-slate-600 hover:bg-slate-200 flex items-center justify-center gap-1 transition';
+
   if (tabId === 'quote') {
     secQuote.classList.remove('hidden');
     btnQuote.className = 'px-3.5 py-2 rounded-lg text-xs font-semibold text-blue-600 bg-blue-50 transition flex items-center gap-1.5';
+    if (mobQuote) mobQuote.className = 'py-1.5 px-2 rounded-md bg-blue-600 text-white flex items-center justify-center gap-1 shadow-sm transition';
   } else if (tabId === 'tracker') {
     secTracker.classList.remove('hidden');
     btnTracker.className = 'px-3.5 py-2 rounded-lg text-xs font-semibold text-blue-600 bg-blue-50 transition flex items-center gap-1.5';
+    if (mobTracker) mobTracker.className = 'py-1.5 px-2 rounded-md bg-blue-600 text-white flex items-center justify-center gap-1 shadow-sm transition';
   } else if (tabId === 'admin') {
     secAdmin.classList.remove('hidden');
     btnAdmin.className = 'px-3.5 py-2 rounded-lg text-xs font-semibold text-blue-600 bg-blue-50 transition flex items-center gap-1.5';
+    if (mobAdmin) mobAdmin.className = 'py-1.5 px-2 rounded-md bg-blue-600 text-white flex items-center justify-center gap-1 shadow-sm transition';
     renderAdminDashboard();
   }
 
