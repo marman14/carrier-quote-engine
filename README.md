@@ -5,20 +5,22 @@ A production-ready, full-stack logistics freight and auto transport quotation en
 
 ---
 
-### 🌐 Live Production Deployments
-- **Primary Live CDN URL:** [https://carrierdirect-logistics.surge.sh](https://carrierdirect-logistics.surge.sh)
-- **Secondary Live Production URL (GitHub Pages):** [https://marman14.github.io/carrier-quote-engine/](https://marman14.github.io/carrier-quote-engine/)
-- **Vercel Project Connected Repo:** [https://github.com/marman14/carrier-quote-engine](https://github.com/marman14/carrier-quote-engine)
+### 🌐 Official Live Production Deployments
+- **Main Vercel Production URL:** [https://carrier-quote-engine-sigma.vercel.app](https://carrier-quote-engine-sigma.vercel.app)
+- **Direct Vercel Deployment:** [https://carrier-quote-engine-oxln83fz7-carrierdirect-logistics.vercel.app](https://carrier-quote-engine-oxln83fz7-carrierdirect-logistics.vercel.app)
+- **Secondary Live Global CDN:** [https://carrierdirect-logistics.surge.sh](https://carrierdirect-logistics.surge.sh)
+- **GitHub Pages Mirror:** [https://marman14.github.io/carrier-quote-engine/](https://marman14.github.io/carrier-quote-engine/)
+- **GitHub Repository:** [https://github.com/marman14/carrier-quote-engine](https://github.com/marman14/carrier-quote-engine)
 
 ---
 
 ### 🔑 Carrier Dispatch Hub (Admin Portal)
-- **Access URL:** Navigate to the **"Carrier Dispatch Hub"** tab
+- **Access Location:** Navigate to the **"Carrier Dispatch Hub"** tab
 - **Master Admin Password:** `admin123`
-- **Convenience Buttons:**
+- **Convenience Features:**
   - `[Auto-Fill Key]` - automatically types `admin123` and logs in with 1 click.
   - `[Copy Key]` - copies `admin123` to clipboard with visual feedback.
-  - `[Lock / Logout]` - securely relocks the dashboard.
+  - `[Lock / Logout]` - securely relocks the dashboard at any time.
 
 ---
 
@@ -63,19 +65,3 @@ A production-ready, full-stack logistics freight and auto transport quotation en
    - Dual automated dispatch:
      1. **Shipper Receipt:** Official HTML Bill of Lading with tracking details.
      2. **Fleet Alert:** Internal load notification to `dispatch@carrier.com`.
-
----
-
-### 📦 Local Development
-```bash
-# Clone the repository
-git clone https://github.com/marman14/carrier-quote-engine.git
-cd carrier-quote-engine
-
-# Install dependencies
-npm install
-
-# Start local server
-npm start
-# Server runs on http://localhost:3000
-```
