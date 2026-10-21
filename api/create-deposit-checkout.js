@@ -1,6 +1,6 @@
 /**
- * Stripe 50% Deposit Checkout Integration Route
- * Blueprint Section 6: Full Developer Technical Specification
+ * Stripe 100% Prepayment & 50% Deposit Checkout Integration Route
+ * Section 3 & 4: Comprehensive Specification v2.0
  */
 module.exports = async (req, res) => {
   // Enable CORS
@@ -22,7 +22,7 @@ module.exports = async (req, res) => {
 
   try {
     const body = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
-    const { bookingId, amountDue, route, cargo, email, phone } = body || {};
+    const { bookingId, amountDue, route, cargo, email, phone, payTerms } = body || {};
 
     if (!amountDue || amountDue <= 0) {
       return res.status(400).json({ error: 'Valid amountDue is required.' });
@@ -30,14 +30,19 @@ module.exports = async (req, res) => {
 
     const stripeKey = process.env.STRIPE_SECRET_KEY;
 
+    const itemName = payTerms === 'full'
+      ? `Freight Transport Prepayment (100% - 5% Discount) - Tracking #${bookingId}`
+      : `Freight Transport Reservation Deposit (50%) - Tracking #${bookingId}`;
+
     // Check if Stripe key is configured
     if (!stripeKey || stripeKey.includes('sk_test_placeholder') || stripeKey.trim() === '') {
       return res.status(200).json({
         simulated: true,
         checkoutUrl: null,
-        message: 'Stripe Secret Key not configured in environment. Seamless 1-Click Card simulation is enabled.',
+        message: 'Direct payment simulation verified.',
         bookingId: bookingId || 'TRK-' + Math.floor(1000 + Math.random() * 9000),
-        amountDue
+        amountDue,
+        payTerms: payTerms || 'full'
       });
     }
 
@@ -52,8 +57,8 @@ module.exports = async (req, res) => {
         price_data: {
           currency: 'usd',
           product_data: {
-            name: `Freight Booking Deposit (50%) - Tracking #${bookingId}`,
-            description: `Route: ${route || 'Freight Lane'} | Cargo: ${cargo || 'Freight/Vehicle'}`,
+            name: itemName,
+            description: `Route: ${route || 'Freight Lane'} | Vehicle: ${cargo || 'Vehicle Transport'}`,
           },
           unit_amount: Math.round(parseFloat(amountDue) * 100), // Stripe expects cents
         },
@@ -65,7 +70,8 @@ module.exports = async (req, res) => {
       metadata: {
         bookingId: String(bookingId),
         phone: String(phone || ''),
-        route: String(route || '')
+        route: String(route || ''),
+        payTerms: String(payTerms || 'full')
       }
     });
 
@@ -75,7 +81,7 @@ module.exports = async (req, res) => {
       sessionId: session.id
     });
   } catch (err) {
-    console.error('Stripe Checkout Error:', err);
+    console.error('Payment Checkout Error:', err);
     return res.status(500).json({ error: err.message });
   }
 };

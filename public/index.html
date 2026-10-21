@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>CarrierDirect Logistics | Instant Freight & Auto Transport Quotes, 50% Deposit & BOL</title>
-  <meta name="description" content="Instant multi-step freight and auto transport rate calculator with real-time mileage routing, transparent 50% deposits, official Bill of Lading (BOL), and 1-click dispatch SMS." />
+  <title>CarrierDirect Logistics | Instant Freight & Auto Transport Quotes, 100% Prepayment & 50% Deposit</title>
+  <meta name="description" content="Direct carrier auto transport and freight quotation engine. Instant road mileage routing, transparent pricing, 100% full prepayment with 5% discount or 50% deposit, and official digital Bill of Lading." />
   
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -32,26 +32,111 @@
       }
     }
   </script>
-  <link rel="stylesheet" href="style.css" />
-</head>
-<body class="bg-slate-50 text-slate-800 antialiased min-h-screen flex flex-col w-full overflow-x-hidden">
+  
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
 
-  <!-- TOP CARRIER COMPLIANCE BAR -->
+    *, *::before, *::after {
+      box-sizing: border-box;
+    }
+
+    html, body {
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      background-color: #f8fafc;
+      overflow-x: hidden !important;
+      width: 100% !important;
+      max-width: 100vw !important;
+      margin: 0;
+      padding: 0;
+    }
+
+    code, .font-mono {
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* Autocomplete dropdown positioning */
+    .autocomplete-dropdown {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      z-index: 50;
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 0.75rem;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+      max-height: 220px;
+      overflow-y: auto;
+      margin-top: 4px;
+    }
+
+    .autocomplete-item {
+      padding: 9px 14px;
+      font-size: 13px;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #f1f5f9;
+      transition: background 0.15s ease;
+    }
+    .autocomplete-item:last-child {
+      border-bottom: none;
+    }
+    .autocomplete-item:hover, .autocomplete-item.active {
+      background-color: #eff6ff;
+    }
+
+    /* Print Stylesheet for Bill of Lading */
+    @media print {
+      body * {
+        visibility: hidden;
+      }
+      #printableBolModal, #printableBolModal * {
+        visibility: visible;
+      }
+      #printableBolModal {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        margin: 0;
+        padding: 0;
+        background: #ffffff !important;
+      }
+      .no-print {
+        display: none !important;
+      }
+      .bol-print-container {
+        box-shadow: none !important;
+        border: none !important;
+        max-width: 100% !important;
+        padding: 10px !important;
+      }
+      @page {
+        size: portrait;
+        margin: 1cm;
+      }
+    }
+  </style>
+</head>
+<body class="bg-[#f8fafc] text-slate-800 antialiased min-h-screen flex flex-col w-full overflow-x-hidden">
+
+  <!-- TOP COMPLIANCE & TRUST BAR (Clean White/Navy Corporate Theme) -->
   <div class="bg-slate-900 text-slate-300 text-[11px] sm:text-xs py-2 px-3 sm:px-4 border-b border-slate-800 w-full">
     <div class="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-1.5 sm:gap-2">
-      <!-- Left Info -->
       <div class="flex flex-wrap items-center justify-center sm:justify-start gap-1.5 sm:gap-3 text-center sm:text-left">
         <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-950 text-emerald-400 border border-emerald-800">
           <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 mr-1.5 animate-pulse"></span>
-          FMCSA LICENSED
+          USDOT & FMCSA VERIFIED MOTOR CARRIER
         </span>
         <span class="text-slate-400">USDOT: <strong class="text-white font-mono">#3892104</strong> | MC: <strong class="text-white font-mono">#941824</strong></span>
         <span class="hidden md:inline text-slate-500">•</span>
-        <span class="hidden md:inline text-slate-300">Bonded & Insured ($100K Cargo)</span>
+        <span class="hidden md:inline text-slate-300">$100,000 Cargo Liability Insurance Included</span>
       </div>
-      <!-- Right Contact -->
       <div class="flex items-center space-x-2 text-[11px] sm:text-xs">
-        <span class="text-slate-400">24/7 Dispatch:</span>
+        <span class="text-slate-400">24/7 Dispatch Desk:</span>
         <a href="tel:+12147789921" class="font-bold text-emerald-400 hover:text-emerald-300 flex items-center gap-1 font-mono">
           <i data-lucide="phone-call" class="w-3 h-3"></i>
           +1 (214) 778-9921
@@ -61,34 +146,34 @@
   </div>
 
   <!-- NAVIGATION HEADER -->
-  <header class="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-sm w-full">
+  <header class="sticky top-0 z-40 bg-white border-b border-slate-200/80 shadow-sm w-full">
     <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 h-16 sm:h-18 flex items-center justify-between gap-2">
       
       <!-- Brand Logo -->
       <div class="flex items-center space-x-2.5 cursor-pointer min-w-0" onclick="switchTab('quote')">
-        <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-tr from-slate-900 via-blue-900 to-blue-600 flex items-center justify-center text-white shadow-md shrink-0">
+        <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-tr from-slate-900 via-blue-900 to-blue-600 flex items-center justify-center text-white shadow-md shadow-blue-500/10 shrink-0">
           <i data-lucide="truck" class="w-4 h-4 sm:w-5 sm:h-5"></i>
         </div>
         <div class="min-w-0 truncate">
           <div class="flex items-center gap-1">
             <span class="text-base sm:text-lg font-black tracking-tight text-slate-900">Carrier<span class="text-blue-600">Direct</span></span>
-            <span class="text-[9px] uppercase font-bold tracking-wider px-1 py-0.5 rounded bg-blue-50 text-blue-700 border border-blue-200 shrink-0">Logistics</span>
+            <span class="text-[9px] uppercase font-bold tracking-wider px-1.5 py-0.5 rounded bg-blue-50 text-blue-700 border border-blue-200 shrink-0">Logistics</span>
           </div>
-          <p class="text-[10px] sm:text-[11px] text-slate-500 font-medium truncate">Direct Carrier Freight & Auto</p>
+          <p class="text-[10px] sm:text-[11px] text-slate-500 font-medium truncate">Direct Motor Carrier & Auto Transport</p>
         </div>
       </div>
 
-      <!-- Desktop Navigation Tabs (Hidden on mobile) -->
+      <!-- Desktop Navigation Tabs -->
       <nav class="hidden md:flex items-center space-x-1 sm:space-x-2">
-        <button id="navBtnQuote" onclick="switchTab('quote')" class="px-3 py-2 rounded-lg text-xs font-semibold text-blue-600 bg-blue-50 transition flex items-center gap-1.5">
+        <button id="navBtnQuote" onclick="switchTab('quote')" class="px-3.5 py-2 rounded-lg text-xs font-semibold text-blue-600 bg-blue-50 transition flex items-center gap-1.5">
           <i data-lucide="calculator" class="w-4 h-4"></i>
           <span>Instant Quote & Book</span>
         </button>
-        <button id="navBtnTracker" onclick="switchTab('tracker')" class="px-3 py-2 rounded-lg text-xs font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition flex items-center gap-1.5">
+        <button id="navBtnTracker" onclick="switchTab('tracker')" class="px-3.5 py-2 rounded-lg text-xs font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition flex items-center gap-1.5">
           <i data-lucide="map-pin" class="w-4 h-4"></i>
           <span>Track Shipment</span>
         </button>
-        <button id="navBtnAdmin" onclick="switchTab('admin')" class="px-3 py-2 rounded-lg text-xs font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition flex items-center gap-1.5">
+        <button id="navBtnAdmin" onclick="switchTab('admin')" class="px-3.5 py-2 rounded-lg text-xs font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition flex items-center gap-1.5">
           <i data-lucide="shield-check" class="w-4 h-4"></i>
           <span>Carrier Dispatch Hub</span>
         </button>
@@ -96,15 +181,15 @@
 
       <!-- Quick Action Mobile Button -->
       <div class="flex items-center space-x-1.5 shrink-0">
-        <a id="headerQuickSmsBtn" href="sms:+12147789921?&body=Hi%20Dispatch%2C%20I%20need%20a%20freight%20quote%20assistance" class="px-2.5 py-1.5 sm:px-3 sm:py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] sm:text-xs font-bold rounded-lg transition flex items-center gap-1 shadow-sm">
+        <a id="headerQuickSmsBtn" href="sms:+12147789921?&body=Hi%20Dispatch%2C%20I%20need%20a%20vehicle%20shipping%20quote%20assistance" class="px-2.5 py-1.5 sm:px-3 sm:py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] sm:text-xs font-bold rounded-lg transition flex items-center gap-1 shadow-sm">
           <i data-lucide="message-square" class="w-3.5 h-3.5"></i>
-          <span>💬 <span class="hidden sm:inline">Text </span>Dispatch</span>
+          <span>💬 <span class="hidden sm:inline">Text </span>Dispatch (0s)</span>
         </a>
       </div>
 
     </div>
 
-    <!-- MOBILE SUB-NAVIGATION BAR (Visible on mobile only, perfectly sized, no overflow) -->
+    <!-- MOBILE SUB-NAVIGATION BAR (Fits all mobile screens with zero clipping) -->
     <div class="md:hidden border-t border-slate-100 bg-slate-50 px-2 py-1.5">
       <div class="grid grid-cols-3 gap-1 text-[11px] font-bold">
         <button id="mobNavQuote" onclick="switchTab('quote')" class="py-1.5 px-2 rounded-md bg-blue-600 text-white flex items-center justify-center gap-1 shadow-sm transition">
@@ -129,7 +214,7 @@
       <i data-lucide="check-circle-2" class="w-5 h-5 text-emerald-200 shrink-0"></i>
       <div>
         <p class="font-bold text-xs">Pricing Matrix Updated</p>
-        <p class="text-[11px] text-emerald-100">Live customer calculator has been updated instantly!</p>
+        <p class="text-[11px] text-emerald-100">Live calculator formula has been updated instantly!</p>
       </div>
     </div>
   </div>
@@ -137,63 +222,62 @@
   <main class="flex-1 max-w-7xl w-full mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-8 space-y-6">
 
     <!-- ========================================================================= -->
-    <!-- TAB 1: INSTANT QUOTATION ENGINE & 50% DEPOSIT BOOKING                     -->
+    <!-- TAB 1: INSTANT QUOTATION ENGINE & BOOKING                                -->
     <!-- ========================================================================= -->
     <section id="tabQuoteSection" class="space-y-4 sm:space-y-6 w-full">
 
-      <!-- Hero Header -->
-      <div class="bg-gradient-to-r from-slate-900 via-slate-800 to-blue-950 rounded-2xl p-4 sm:p-8 text-white shadow-lg relative overflow-hidden w-full">
-        <div class="absolute -right-12 -bottom-12 w-64 h-64 bg-blue-600/10 rounded-full blur-3xl pointer-events-none"></div>
+      <!-- Hero Header (Modern Clean Corporate Theme) -->
+      <div class="bg-white rounded-2xl p-5 sm:p-8 text-slate-900 shadow-sm border border-slate-200/90 relative overflow-hidden w-full">
         <div class="max-w-3xl relative z-10">
-          <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-blue-500/20 text-blue-300 text-[10px] sm:text-xs font-bold mb-2.5 border border-blue-400/30">
-            <i data-lucide="zap" class="w-3 h-3 text-blue-400 shrink-0"></i>
-            <span>Guaranteed Direct Rates • 50% Deposit Lock-In</span>
+          <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-blue-50 text-blue-700 text-[10px] sm:text-xs font-bold mb-2.5 border border-blue-200">
+            <i data-lucide="shield-check" class="w-3.5 h-3.5 text-blue-600 shrink-0"></i>
+            <span>Guaranteed Direct Carrier Rates • 100% Full Prepayment or 50% Deposit</span>
           </div>
-          <h1 class="text-xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight leading-tight">
-            Freight & Auto Transport Instant Quotation Engine
+          <h1 class="text-xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight leading-tight text-slate-900">
+            Vehicle & Freight Transport Instant Quotation Engine
           </h1>
-          <p class="mt-2 text-xs sm:text-sm text-slate-300 leading-relaxed">
-            Real-time highway distance calculation, transparent itemized pricing, instant 50% booking deposit, and official digital Bill of Lading (BOL).
+          <p class="mt-2 text-xs sm:text-sm text-slate-600 leading-relaxed">
+            Automatic highway road mileage calculation, transparent Door-to-Door vs Terminal Depot pricing, 100% full prepayment with 5% discount incentive, and instant official Bill of Lading (BOL).
           </p>
         </div>
 
         <!-- Progress Indicator (Mobile Compact View) -->
-        <div class="mt-5 pt-4 border-t border-slate-700/60 block sm:hidden">
-          <div class="flex items-center justify-between text-xs font-bold text-slate-300 mb-1.5">
-            <span id="mobileStepText" class="text-blue-400">Step 1 of 3: Route & Mileage</span>
-            <span id="mobileStepPct" class="font-mono text-[11px] text-slate-400">33%</span>
+        <div class="mt-5 pt-4 border-t border-slate-100 block sm:hidden">
+          <div class="flex items-center justify-between text-xs font-bold text-slate-700 mb-1.5">
+            <span id="mobileStepText" class="text-blue-600">Step 1 of 3: Route & Zip Lookup</span>
+            <span id="mobileStepPct" class="font-mono text-[11px] text-slate-500">33%</span>
           </div>
-          <div class="w-full h-2 rounded-full bg-slate-700 overflow-hidden">
-            <div id="mobileProgressBar" class="h-full bg-blue-500 transition-all duration-300 rounded-full" style="width: 33%"></div>
+          <div class="w-full h-2 rounded-full bg-slate-200 overflow-hidden">
+            <div id="mobileProgressBar" class="h-full bg-blue-600 transition-all duration-300 rounded-full" style="width: 33%"></div>
           </div>
         </div>
 
         <!-- 3-Step Stepper Progress Bar (Desktop & Tablet) -->
-        <div class="mt-6 pt-5 border-t border-slate-700/60 hidden sm:grid grid-cols-3 gap-3 text-xs font-medium">
-          <div id="stepPill1" class="flex items-center space-x-2 text-blue-400 font-bold min-w-0">
+        <div class="mt-6 pt-5 border-t border-slate-100 hidden sm:grid grid-cols-3 gap-3 text-xs font-medium">
+          <div id="stepPill1" class="flex items-center space-x-2 text-blue-600 font-bold min-w-0">
             <span class="w-6 h-6 rounded-full bg-blue-600 text-white flex items-center justify-center text-xs shrink-0">1</span>
-            <span class="truncate">Route & Mileage</span>
+            <span class="truncate">Route & Service Radius</span>
           </div>
           <div id="stepPill2" class="flex items-center space-x-2 text-slate-400 min-w-0">
-            <span id="stepBadge2" class="w-6 h-6 rounded-full bg-slate-700 text-slate-300 flex items-center justify-center text-xs shrink-0">2</span>
-            <span class="truncate">Cargo Specifications</span>
+            <span id="stepBadge2" class="w-6 h-6 rounded-full bg-slate-200 text-slate-600 flex items-center justify-center text-xs shrink-0">2</span>
+            <span class="truncate">Vehicle Specifications</span>
           </div>
           <div id="stepPill3" class="flex items-center space-x-2 text-slate-400 min-w-0">
-            <span id="stepBadge3" class="w-6 h-6 rounded-full bg-slate-700 text-slate-300 flex items-center justify-center text-xs shrink-0">3</span>
-            <span class="truncate">Speed & 50% Deposit</span>
+            <span id="stepBadge3" class="w-6 h-6 rounded-full bg-slate-200 text-slate-600 flex items-center justify-center text-xs shrink-0">3</span>
+            <span class="truncate">Payment Terms & Rates</span>
           </div>
         </div>
       </div>
 
       <!-- MAIN QUOTE WIDGET CONTAINER -->
-      <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden w-full">
+      <div class="bg-white rounded-2xl shadow-sm border border-slate-200/90 overflow-hidden w-full">
         
-        <!-- STEP 1: ROUTE & ZIP LOOKUP -->
+        <!-- STEP 1: ROUTE & US ZIP AUTOCOMPLETE (WITH 25-35 MI RADIUS) -->
         <div id="quoteStep1Container" class="p-4 sm:p-8 space-y-5 sm:space-y-6 w-full">
           <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-100 pb-3 gap-1">
             <div>
               <h2 class="text-base sm:text-lg font-bold text-slate-900">Step 1: Transport Route & US Zip Lookup</h2>
-              <p class="text-xs text-slate-500">Auto-validates postal codes and calculates real road highway mileage via OSRM</p>
+              <p class="text-xs text-slate-500">Type 2+ characters to search cities or zip codes with automatic 25–35 Mile Service Radius indicator</p>
             </div>
             <span class="text-xs font-semibold px-2.5 py-1 bg-slate-100 text-slate-600 rounded-md self-start sm:self-auto">Step 1 of 3</span>
           </div>
@@ -209,20 +293,23 @@
                   </div>
                   <h3 class="font-bold text-sm text-slate-800">Origin Pickup Location</h3>
                 </div>
-                <span id="originStatusBadge" class="text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 border border-emerald-200">
-                  ✓ Verified Zip
+                <span id="originRadiusBadge" class="text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 border border-emerald-200">
+                  25 Mi Service Radius
                 </span>
               </div>
 
-              <div>
-                <label class="block text-xs font-semibold text-slate-700 mb-1">Origin US Zip Code *</label>
+              <!-- Zip / City Autocomplete Input with Dropdown -->
+              <div class="relative">
+                <label class="block text-xs font-semibold text-slate-700 mb-1">Origin Zip Code or City * (Type 2+ chars)</label>
                 <div class="relative">
-                  <input type="text" id="originZip" maxlength="5" placeholder="e.g. 75001" value="75001"
-                    class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-lg text-sm font-mono font-bold text-slate-900 focus:ring-2 focus:ring-blue-500 outline-none transition" />
+                  <input type="text" id="originZip" autocomplete="off" placeholder="e.g. 75001 or Dallas" value="75001"
+                    class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:ring-2 focus:ring-blue-500 outline-none transition" />
                   <div id="originZipSpinner" class="hidden absolute right-3 top-3 text-slate-400 animate-spin">
                     <i data-lucide="loader-2" class="w-4 h-4"></i>
                   </div>
                 </div>
+                <!-- Autocomplete Dropdown List -->
+                <div id="originDropdown" class="autocomplete-dropdown hidden"></div>
               </div>
 
               <div class="grid grid-cols-2 gap-2 sm:gap-3">
@@ -238,14 +325,25 @@
                 </div>
               </div>
 
-              <div>
-                <label class="block text-xs font-semibold text-slate-700 mb-1">Pickup Street Address</label>
+              <!-- Street Address (Revealed for Door-to-Door) -->
+              <div id="originStreetBox">
+                <label class="block text-xs font-semibold text-slate-700 mb-1">Pickup Street Address (Door Service)</label>
                 <input type="text" id="originStreet" placeholder="e.g. 1200 Logistics Center Pkwy" value="1200 Logistics Center Pkwy"
                   class="w-full px-3 py-2 bg-white border border-slate-300 rounded-lg text-xs text-slate-800 focus:ring-2 focus:ring-blue-500 outline-none" />
               </div>
 
+              <!-- Regional Depot Dropdown (Revealed for Terminal) -->
+              <div id="originDepotBox" class="hidden">
+                <label class="block text-xs font-semibold text-slate-700 mb-1">Select Regional Carrier Drop-off Depot</label>
+                <select id="originDepotSelect" class="w-full px-3 py-2 bg-white border border-slate-300 rounded-lg text-xs text-slate-800 outline-none">
+                  <option value="Dallas Central Carrier Depot - Gate 4">Dallas Central Carrier Depot - Gate 4 (Hub #104)</option>
+                  <option value="Fort Worth Regional Logistics Hub">Fort Worth Regional Logistics Hub (Hub #108)</option>
+                  <option value="North Texas Intermodal Terminal">North Texas Intermodal Terminal (Hub #112)</option>
+                </select>
+              </div>
+
               <div>
-                <label class="block text-xs font-semibold text-slate-700 mb-1">Origin Onsite Contact Person & Phone</label>
+                <label class="block text-xs font-semibold text-slate-700 mb-1">Origin Contact Person & Phone</label>
                 <input type="text" id="originContact" placeholder="e.g. Warehouse Lead (214-555-0199)" value="Warehouse Lead (214-555-0199)"
                   class="w-full px-3 py-2 bg-white border border-slate-300 rounded-lg text-xs text-slate-800 focus:ring-2 focus:ring-blue-500 outline-none" />
               </div>
@@ -260,20 +358,23 @@
                   </div>
                   <h3 class="font-bold text-sm text-slate-800">Destination Delivery Location</h3>
                 </div>
-                <span id="destStatusBadge" class="text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 border border-emerald-200">
-                  ✓ Verified Zip
+                <span id="destRadiusBadge" class="text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 border border-emerald-200">
+                  35 Mi Service Radius
                 </span>
               </div>
 
-              <div>
-                <label class="block text-xs font-semibold text-slate-700 mb-1">Destination US Zip Code *</label>
+              <!-- Zip / City Autocomplete Input with Dropdown -->
+              <div class="relative">
+                <label class="block text-xs font-semibold text-slate-700 mb-1">Destination Zip Code or City * (Type 2+ chars)</label>
                 <div class="relative">
-                  <input type="text" id="destZip" maxlength="5" placeholder="e.g. 90001" value="90001"
-                    class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-lg text-sm font-mono font-bold text-slate-900 focus:ring-2 focus:ring-blue-500 outline-none transition" />
+                  <input type="text" id="destZip" autocomplete="off" placeholder="e.g. 90001 or Los Angeles" value="90001"
+                    class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 focus:ring-2 focus:ring-blue-500 outline-none transition" />
                   <div id="destZipSpinner" class="hidden absolute right-3 top-3 text-slate-400 animate-spin">
                     <i data-lucide="loader-2" class="w-4 h-4"></i>
                   </div>
                 </div>
+                <!-- Autocomplete Dropdown List -->
+                <div id="destDropdown" class="autocomplete-dropdown hidden"></div>
               </div>
 
               <div class="grid grid-cols-2 gap-2 sm:gap-3">
@@ -289,10 +390,21 @@
                 </div>
               </div>
 
-              <div>
-                <label class="block text-xs font-semibold text-slate-700 mb-1">Delivery Street Address</label>
+              <!-- Street Address (Revealed for Door-to-Door) -->
+              <div id="destStreetBox">
+                <label class="block text-xs font-semibold text-slate-700 mb-1">Delivery Street Address (Door Service)</label>
                 <input type="text" id="destStreet" placeholder="e.g. 850 Commercial Blvd" value="850 Commercial Blvd"
                   class="w-full px-3 py-2 bg-white border border-slate-300 rounded-lg text-xs text-slate-800 focus:ring-2 focus:ring-blue-500 outline-none" />
+              </div>
+
+              <!-- Regional Depot Dropdown (Revealed for Terminal) -->
+              <div id="destDepotBox" class="hidden">
+                <label class="block text-xs font-semibold text-slate-700 mb-1">Select Regional Carrier Pickup Depot</label>
+                <select id="destDepotSelect" class="w-full px-3 py-2 bg-white border border-slate-300 rounded-lg text-xs text-slate-800 outline-none">
+                  <option value="Los Angeles Intermodal Freight Terminal">Los Angeles Intermodal Freight Terminal (Hub #201)</option>
+                  <option value="Long Beach Port Carrier Hub">Long Beach Port Carrier Hub (Hub #204)</option>
+                  <option value="Ontario Inland Logistics Depot">Ontario Inland Logistics Depot (Hub #210)</option>
+                </select>
               </div>
 
               <div>
@@ -304,22 +416,47 @@
 
           </div>
 
-          <!-- SERVICE TYPE & ACCESSORIAL -->
-          <div class="bg-blue-50/70 rounded-xl p-3.5 sm:p-4 border border-blue-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-            <div>
-              <span class="text-xs font-bold text-blue-900 flex items-center gap-1.5">
-                <i data-lucide="home" class="w-4 h-4 text-blue-600 shrink-0"></i>
-                Pickup / Delivery Method
-              </span>
-              <p class="text-[11px] text-blue-700">Choose between direct door pickup or terminal drop-off</p>
-            </div>
-            <div class="grid grid-cols-2 gap-1.5 bg-white p-1 rounded-lg border border-blue-200 shrink-0">
-              <button type="button" id="serviceTypeDoor" onclick="setServiceType('door')" class="px-2.5 py-1.5 rounded-md text-xs font-bold bg-blue-600 text-white shadow-sm transition text-center">
-                🏠 Door-to-Door
-              </button>
-              <button type="button" id="serviceTypeTerminal" onclick="setServiceType('terminal')" class="px-2.5 py-1.5 rounded-md text-xs font-bold text-slate-600 hover:text-slate-900 transition text-center">
-                🏢 Terminal ($0)
-              </button>
+          <!-- FIX #3: TRANSPARENT DOOR (+$120.00) VS TERMINAL ($0.00) CARDS -->
+          <div class="space-y-2">
+            <label class="block text-xs font-bold text-slate-800">Choose Pickup & Delivery Service Type</label>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              
+              <!-- Door-to-Door Card -->
+              <div id="cardServiceDoor" onclick="setServiceType('door')" class="cursor-pointer border-2 border-blue-600 bg-blue-50/50 rounded-xl p-4 transition text-left">
+                <div class="flex items-center justify-between mb-1.5">
+                  <div class="flex items-center space-x-2">
+                    <span class="w-7 h-7 rounded-lg bg-blue-100 text-blue-700 flex items-center justify-center font-bold text-xs">
+                      🏠
+                    </span>
+                    <h4 class="font-bold text-sm text-slate-900">Door-to-Door Service</h4>
+                  </div>
+                  <span class="px-2 py-0.5 rounded text-[11px] font-bold bg-blue-600 text-white">
+                    +$120.00 Fee
+                  </span>
+                </div>
+                <p class="text-xs text-slate-600">
+                  Carrier driver arrives directly at your residential or commercial physical address for both pickup & delivery.
+                </p>
+              </div>
+
+              <!-- Terminal Depot Card -->
+              <div id="cardServiceTerminal" onclick="setServiceType('terminal')" class="cursor-pointer border-2 border-slate-200 hover:border-slate-300 bg-white rounded-xl p-4 transition text-left">
+                <div class="flex items-center justify-between mb-1.5">
+                  <div class="flex items-center space-x-2">
+                    <span class="w-7 h-7 rounded-lg bg-slate-100 text-slate-700 flex items-center justify-center font-bold text-xs">
+                      🏢
+                    </span>
+                    <h4 class="font-bold text-sm text-slate-900">Regional Terminal Depot</h4>
+                  </div>
+                  <span class="px-2 py-0.5 rounded text-[11px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-300">
+                    Free ($0.00)
+                  </span>
+                </div>
+                <p class="text-xs text-slate-600">
+                  Drop off and pick up vehicle at your nearest major carrier freight depot hub. Maximum rate savings.
+                </p>
+              </div>
+
             </div>
           </div>
 
@@ -332,9 +469,9 @@
               <div class="min-w-0">
                 <div class="flex flex-wrap items-center gap-1.5">
                   <span id="routeLaneText" class="text-xs sm:text-sm font-bold tracking-tight truncate">Dallas, TX ➔ Los Angeles, CA</span>
-                  <span class="text-[9px] uppercase font-bold px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">Verified</span>
+                  <span class="text-[9px] uppercase font-bold px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">Verified Road Highway Route</span>
                 </div>
-                <p id="routeSubText" class="text-[11px] text-slate-400">OSRM Road Highway Routing</p>
+                <p id="routeSubText" class="text-[11px] text-slate-400">Road Distance Highway Mileage Routing</p>
               </div>
             </div>
             <div class="text-left sm:text-right shrink-0">
@@ -348,108 +485,152 @@
           <!-- STEP 1 ACTION -->
           <div class="flex justify-end pt-2">
             <button type="button" onclick="goToStep(2)" class="w-full sm:w-auto px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold rounded-xl shadow-md transition flex items-center justify-center gap-2">
-              <span>Continue to Cargo Specifications</span>
+              <span>Continue to Vehicle Details</span>
               <i data-lucide="arrow-right" class="w-4 h-4"></i>
             </button>
           </div>
         </div>
 
 
-        <!-- STEP 2: CARGO SPECIFICATIONS -->
+        <!-- STEP 2: AUTOMOTIVE FORM SPECIFICATION (ZERO WEIGHT INPUT - FIX #4 & #5) -->
         <div id="quoteStep2Container" class="hidden p-4 sm:p-8 space-y-5 sm:space-y-6 w-full">
           <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-100 pb-3 gap-1">
             <div>
-              <h2 class="text-base sm:text-lg font-bold text-slate-900">Step 2: Cargo & Vehicle Specifications</h2>
-              <p class="text-xs text-slate-500">Provide freight or vehicle parameters to calculate appropriate equipment and handling accessorials</p>
+              <h2 class="text-base sm:text-lg font-bold text-slate-900">Step 2: Vehicle Specifications</h2>
+              <p class="text-xs text-slate-500">Provide basic vehicle details (Year, Make, Model, Color, and Size Classification). No vehicle weight required.</p>
             </div>
             <span class="text-xs font-semibold px-2.5 py-1 bg-slate-100 text-slate-600 rounded-md self-start sm:self-auto">Step 2 of 3</span>
           </div>
 
-          <!-- CATEGORY SELECTOR -->
+          <!-- VEHICLE YEAR, MAKE, MODEL, COLOR (NO CURB WEIGHT IN LBS) -->
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1">Vehicle Year *</label>
+              <select id="vehicleYear" onchange="updateVehicleTitle()" class="w-full px-3 py-2.5 bg-white border border-slate-300 rounded-lg text-xs font-semibold text-slate-800 outline-none">
+                <option value="2026">2026</option>
+                <option value="2025">2025</option>
+                <option value="2024" selected>2024</option>
+                <option value="2023">2023</option>
+                <option value="2022">2022</option>
+                <option value="2021">2021</option>
+                <option value="2020">2020</option>
+                <option value="2019">2019</option>
+                <option value="2018">2018</option>
+                <option value="2017">2017</option>
+                <option value="2016">2016</option>
+                <option value="2015">2015</option>
+                <option value="2014">2014</option>
+                <option value="2013">2013</option>
+                <option value="2012">2012</option>
+                <option value="2010">2010</option>
+                <option value="2005">2005</option>
+                <option value="2000">2000</option>
+                <option value="Classic / Vintage">Classic / Vintage (Pre-2000)</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1">Make *</label>
+              <input type="text" id="vehicleMake" placeholder="e.g. Ford, Toyota" value="Ford" oninput="updateVehicleTitle()"
+                class="w-full px-3 py-2.5 bg-white border border-slate-300 rounded-lg text-xs font-semibold text-slate-800 outline-none" />
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1">Model *</label>
+              <input type="text" id="vehicleModel" placeholder="e.g. F-150, Model Y" value="F-150 Crew Cab" oninput="updateVehicleTitle()"
+                class="w-full px-3 py-2.5 bg-white border border-slate-300 rounded-lg text-xs font-semibold text-slate-800 outline-none" />
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1">Color *</label>
+              <input type="text" id="vehicleColor" placeholder="e.g. Black, White" value="Oxford White" oninput="updateVehicleTitle()"
+                class="w-full px-3 py-2.5 bg-white border border-slate-300 rounded-lg text-xs font-semibold text-slate-800 outline-none" />
+            </div>
+          </div>
+
+          <!-- VEHICLE SIZE CLASSIFICATION PILLS (FIX #4) -->
           <div>
-            <label class="block text-xs font-bold text-slate-700 mb-2">Transport Category</label>
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5 sm:gap-3">
-              <div onclick="selectCargoCategory('auto')" id="catAutoCard" class="cursor-pointer border-2 border-blue-600 bg-blue-50/50 rounded-xl p-3 sm:p-4 transition text-left">
-                <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-blue-100 text-blue-700 flex items-center justify-center mb-1.5">
-                  <i data-lucide="car" class="w-4 h-4 sm:w-5 sm:h-5"></i>
-                </div>
-                <h4 class="font-bold text-sm text-slate-900">Auto / Vehicle</h4>
-                <p class="text-[11px] text-slate-500 mt-0.5">Sedan, SUV, Truck, Van, Exotic</p>
+            <label class="block text-xs font-bold text-slate-800 mb-2">Vehicle Size Classification</label>
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+              
+              <!-- Sedan Pill -->
+              <div onclick="setVehicleClass('sedan')" id="pillClassSedan" class="cursor-pointer border-2 border-slate-200 hover:border-slate-300 bg-white rounded-xl p-3 transition text-center">
+                <span class="text-xl">🚗</span>
+                <div class="font-bold text-xs text-slate-900 mt-1">Sedan / Coupe</div>
+                <div class="text-[10px] text-slate-500 font-semibold">Standard ($0)</div>
               </div>
 
-              <div onclick="selectCargoCategory('pallet')" id="catPalletCard" class="cursor-pointer border-2 border-slate-200 hover:border-slate-300 bg-white rounded-xl p-3 sm:p-4 transition text-left">
-                <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-slate-100 text-slate-700 flex items-center justify-center mb-1.5">
-                  <i data-lucide="boxes" class="w-4 h-4 sm:w-5 sm:h-5"></i>
-                </div>
-                <h4 class="font-bold text-sm text-slate-900">Palletized Freight & LTL</h4>
-                <p class="text-[11px] text-slate-500 mt-0.5">Standard 48x40, Commercial crates</p>
+              <!-- SUV Pill -->
+              <div onclick="setVehicleClass('suv')" id="pillClassSuv" class="cursor-pointer border-2 border-slate-200 hover:border-slate-300 bg-white rounded-xl p-3 transition text-center">
+                <span class="text-xl">🚙</span>
+                <div class="font-bold text-xs text-slate-900 mt-1">SUV / Crossover</div>
+                <div class="text-[10px] text-blue-600 font-bold">+$90.00</div>
               </div>
 
-              <div onclick="selectCargoCategory('heavy')" id="catHeavyCard" class="cursor-pointer border-2 border-slate-200 hover:border-slate-300 bg-white rounded-xl p-3 sm:p-4 transition text-left">
-                <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-slate-100 text-slate-700 flex items-center justify-center mb-1.5">
-                  <i data-lucide="hard-hat" class="w-4 h-4 sm:w-5 sm:h-5"></i>
-                </div>
-                <h4 class="font-bold text-sm text-slate-900">Heavy Equipment / Machinery</h4>
-                <p class="text-[11px] text-slate-500 mt-0.5">Industrial, Construction, Oversized</p>
+              <!-- Pickup Truck Pill (Default) -->
+              <div onclick="setVehicleClass('pickup')" id="pillClassPickup" class="cursor-pointer border-2 border-blue-600 bg-blue-50/50 rounded-xl p-3 transition text-center">
+                <span class="text-xl">🛻</span>
+                <div class="font-bold text-xs text-slate-900 mt-1">Pickup Truck</div>
+                <div class="text-[10px] text-blue-600 font-bold">+$180.00</div>
               </div>
+
+              <!-- Van / Large Truck Pill -->
+              <div onclick="setVehicleClass('van')" id="pillClassVan" class="cursor-pointer border-2 border-slate-200 hover:border-slate-300 bg-white rounded-xl p-3 transition text-center">
+                <span class="text-xl">🚐</span>
+                <div class="font-bold text-xs text-slate-900 mt-1">Van / Dually</div>
+                <div class="text-[10px] text-blue-600 font-bold">+$250.00</div>
+              </div>
+
             </div>
           </div>
 
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
-            <div>
-              <label class="block text-xs font-semibold text-slate-700 mb-1">Vehicle / Freight Description *</label>
-              <input type="text" id="cargoDescription" placeholder="e.g. 2024 Ford F-150 Crew Cab" value="2024 Ford F-150 Crew Cab"
-                class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-lg text-sm text-slate-900 focus:ring-2 focus:ring-blue-500 outline-none" />
-            </div>
-
-            <div>
-              <label class="block text-xs font-semibold text-slate-700 mb-1">Estimated Total Weight (lbs)</label>
-              <input type="number" id="cargoWeight" placeholder="e.g. 4800" value="4800"
-                class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-lg text-sm text-slate-900 focus:ring-2 focus:ring-blue-500 outline-none" />
-            </div>
-          </div>
-
-          <!-- EQUIPMENT & CONDITION OPTIONS -->
+          <!-- PLAIN ENGLISH: RUNS & DRIVES TOGGLE + OPEN VS ENCLOSED (FIX #5) -->
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div class="bg-slate-50 rounded-xl p-3.5 sm:p-4 border border-slate-200">
-              <label class="block text-xs font-bold text-slate-800 mb-2">Cargo / Vehicle Operability</label>
-              <div class="space-y-2">
-                <label class="flex items-center space-x-2 text-xs text-slate-700 cursor-pointer">
-                  <input type="radio" name="operability" value="operable" checked onchange="setOperability('operable')" class="text-blue-600 focus:ring-blue-500" />
-                  <span class="font-medium">Runs & Operable ($0 Accessorial)</span>
-                </label>
-                <label class="flex items-center space-x-2 text-xs text-slate-700 cursor-pointer">
-                  <input type="radio" name="operability" value="inoperable" onchange="setOperability('inoperable')" class="text-blue-600 focus:ring-blue-500" />
-                  <span class="font-medium">Inoperable / Winch Required (+<strong class="text-amber-600">$150.00</strong>)</span>
-                </label>
+            
+            <!-- Runs & Drives (Yes/No) -->
+            <div class="bg-slate-50 rounded-xl p-4 border border-slate-200">
+              <label class="block text-xs font-bold text-slate-800 mb-2">Does the vehicle run & drive?</label>
+              <div class="grid grid-cols-2 gap-2">
+                <button type="button" id="btnRunsYes" onclick="setRunsAndDrives(true)" class="py-2.5 px-3 rounded-lg text-xs font-bold bg-blue-600 text-white shadow-sm transition text-center">
+                  ✓ Yes, Runs & Drives ($0)
+                </button>
+                <button type="button" id="btnRunsNo" onclick="setRunsAndDrives(false)" class="py-2.5 px-3 rounded-lg text-xs font-bold text-slate-700 bg-white border border-slate-300 hover:bg-slate-100 transition text-center">
+                  ✕ No (Winch +$150)
+                </button>
               </div>
+              <p class="text-[11px] text-slate-500 mt-1.5" id="runsDrivesHelpText">
+                Vehicles that roll, steer, and brake drive safely onto standard carrier ramps.
+              </p>
             </div>
 
-            <div class="bg-slate-50 rounded-xl p-3.5 sm:p-4 border border-slate-200">
-              <label class="block text-xs font-bold text-slate-800 mb-2">Carrier Trailer Rig Type</label>
-              <div class="space-y-2">
-                <label class="flex items-center space-x-2 text-xs text-slate-700 cursor-pointer">
-                  <input type="radio" name="carrierType" value="open" checked onchange="setCarrierType('open')" class="text-blue-600 focus:ring-blue-500" />
-                  <span class="font-medium">Open Multi-Vehicle / Flatbed (Standard)</span>
-                </label>
-                <label class="flex items-center space-x-2 text-xs text-slate-700 cursor-pointer">
-                  <input type="radio" name="carrierType" value="enclosed" onchange="setCarrierType('enclosed')" class="text-blue-600 focus:ring-blue-500" />
-                  <span class="font-medium">Enclosed White-Glove (+<strong class="text-blue-600">40%</strong>)</span>
-                </label>
+            <!-- Standard Open vs Enclosed Carrier (+30%) -->
+            <div class="bg-slate-50 rounded-xl p-4 border border-slate-200">
+              <label class="block text-xs font-bold text-slate-800 mb-2">Carrier Protection Level</label>
+              <div class="grid grid-cols-2 gap-2">
+                <button type="button" id="btnCarrierOpen" onclick="setCarrierProtection('open')" class="py-2.5 px-3 rounded-lg text-xs font-bold bg-blue-600 text-white shadow-sm transition text-center">
+                  Standard Open Carrier ($0)
+                </button>
+                <button type="button" id="btnCarrierEnclosed" onclick="setCarrierProtection('enclosed')" class="py-2.5 px-3 rounded-lg text-xs font-bold text-slate-700 bg-white border border-slate-300 hover:bg-slate-100 transition text-center">
+                  Enclosed Carrier (+30%)
+                </button>
               </div>
+              <p class="text-[11px] text-slate-500 mt-1.5" id="carrierHelpText">
+                Standard multi-vehicle open carrier is the most cost-effective auto transport method.
+              </p>
             </div>
+
           </div>
 
           <!-- SHIPPER CONTACT INFO FOR BOL AND SMS -->
           <div class="bg-slate-50/80 rounded-xl p-4 sm:p-5 border border-slate-200 space-y-3">
             <h3 class="font-bold text-xs sm:text-sm text-slate-800 flex items-center gap-1.5">
               <i data-lucide="user-check" class="w-4 h-4 text-blue-600 shrink-0"></i>
-              Shipper / Billing Contact Details
+              Shipper / Customer Contact (For Official Bill of Lading & Receipt)
             </h3>
             
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
               <div>
-                <label class="block text-[11px] font-semibold text-slate-700 mb-1">Shipper Full Name *</label>
+                <label class="block text-[11px] font-semibold text-slate-700 mb-1">Full Legal Name *</label>
                 <input type="text" id="shipperName" placeholder="e.g. John Anderson" value="John Anderson"
                   class="w-full px-3 py-2 bg-white border border-slate-300 rounded-lg text-xs text-slate-900 focus:ring-2 focus:ring-blue-500 outline-none" />
               </div>
@@ -459,7 +640,7 @@
                   class="w-full px-3 py-2 bg-white border border-slate-300 rounded-lg text-xs text-slate-900 focus:ring-2 focus:ring-blue-500 outline-none" />
               </div>
               <div>
-                <label class="block text-[11px] font-semibold text-slate-700 mb-1">Mobile Phone (for Driver SMS) *</label>
+                <label class="block text-[11px] font-semibold text-slate-700 mb-1">Mobile Cell Phone *</label>
                 <input type="tel" id="shipperPhone" placeholder="e.g. (214) 555-0199" value="(214) 555-0199"
                   class="w-full px-3 py-2 bg-white border border-slate-300 rounded-lg text-xs text-slate-900 focus:ring-2 focus:ring-blue-500 outline-none" />
               </div>
@@ -473,19 +654,19 @@
               <span>Back to Route</span>
             </button>
             <button type="button" onclick="goToStep(3)" class="w-full sm:w-auto px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold rounded-xl shadow-md transition flex items-center justify-center gap-2">
-              <span>Calculate Guaranteed Rates</span>
+              <span>View Guaranteed Pricing</span>
               <i data-lucide="arrow-right" class="w-4 h-4"></i>
             </button>
           </div>
         </div>
 
 
-        <!-- STEP 3: SPEED TIERS & TRANSPARENT FINANCIAL BREAKDOWN -->
+        <!-- STEP 3: SPEED TIERS & 100% PREPAYMENT (DEFAULT) VS 50% DEPOSIT (FIX #1) -->
         <div id="quoteStep3Container" class="hidden p-4 sm:p-8 space-y-5 sm:space-y-6 w-full">
           <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-100 pb-3 gap-1">
             <div>
               <h2 class="text-base sm:text-lg font-bold text-slate-900">Step 3: Speed Tiers & Transparent Financial Breakdown</h2>
-              <p class="text-xs text-slate-500">Select transit speed. 50% deposit locks in carrier equipment; balance COD upon arrival.</p>
+              <p class="text-xs text-slate-500">100% Full Prepayment with 5% instant discount is selected by default; 50% deposit option selectable beside it.</p>
             </div>
             <span class="text-xs font-semibold px-2.5 py-1 bg-slate-100 text-slate-600 rounded-md self-start sm:self-auto">Step 3 of 3</span>
           </div>
@@ -494,32 +675,32 @@
           <div class="grid grid-cols-1 md:grid-cols-3 gap-3.5 sm:gap-4">
             
             <!-- Standard Linehaul -->
-            <div id="tierCardStandard" onclick="selectSpeedTier('standard')" class="cursor-pointer border-2 border-blue-600 bg-blue-50/40 rounded-2xl p-4 sm:p-5 relative transition interactive-card">
+            <div id="tierCardStandard" onclick="selectSpeedTier('standard')" class="cursor-pointer border-2 border-blue-600 bg-blue-50/40 rounded-2xl p-4 sm:p-5 relative transition">
               <div class="flex justify-between items-start mb-2">
                 <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-blue-100 text-blue-700 border border-blue-200">
-                  POPULAR
+                  STANDARD
                 </span>
                 <span id="tierRadioStandard" class="w-4 h-4 rounded-full border-2 border-blue-600 bg-blue-600 flex items-center justify-center shrink-0">
                   <span class="w-1.5 h-1.5 rounded-full bg-white"></span>
                 </span>
               </div>
-              <h3 class="font-bold text-sm sm:text-base text-slate-900">Standard Linehaul</h3>
+              <h3 class="font-bold text-sm sm:text-base text-slate-900">Standard Transit</h3>
               <p class="text-xs text-slate-500 mt-0.5">Reliable scheduled carrier dispatch</p>
               
               <div class="my-3 sm:my-4">
                 <div class="text-xl sm:text-2xl font-black text-slate-900 font-mono" id="tierPriceStandard">$0.00</div>
-                <div class="text-xs text-slate-600 font-semibold mt-0.5">Deposit: <span id="tierDepositStandard" class="text-emerald-700 font-mono font-bold">$0.00</span> (50%)</div>
+                <div class="text-xs text-slate-600 font-semibold mt-0.5">Prepaid: <span id="tierPrepaidStandard" class="text-emerald-700 font-mono font-bold">$0.00</span> (-5%)</div>
               </div>
 
               <ul class="text-xs text-slate-600 space-y-1.5 border-t border-slate-200/60 pt-2.5">
                 <li class="flex items-center gap-1.5"><i data-lucide="check" class="w-3.5 h-3.5 text-blue-600 shrink-0"></i> 4–7 Business Days</li>
-                <li class="flex items-center gap-1.5"><i data-lucide="check" class="w-3.5 h-3.5 text-blue-600 shrink-0"></i> Standard Highway Safety</li>
-                <li class="flex items-center gap-1.5"><i data-lucide="check" class="w-3.5 h-3.5 text-blue-600 shrink-0"></i> GPS Location Tracking</li>
+                <li class="flex items-center gap-1.5"><i data-lucide="check" class="w-3.5 h-3.5 text-blue-600 shrink-0"></i> Direct Highway Safety</li>
+                <li class="flex items-center gap-1.5"><i data-lucide="check" class="w-3.5 h-3.5 text-blue-600 shrink-0"></i> GPS Location Updates</li>
               </ul>
             </div>
 
             <!-- Expedited Rush (+25%) -->
-            <div id="tierCardRush" onclick="selectSpeedTier('rush')" class="cursor-pointer border-2 border-slate-200 hover:border-slate-300 bg-white rounded-2xl p-4 sm:p-5 relative transition interactive-card">
+            <div id="tierCardRush" onclick="selectSpeedTier('rush')" class="cursor-pointer border-2 border-slate-200 hover:border-slate-300 bg-white rounded-2xl p-4 sm:p-5 relative transition">
               <div class="flex justify-between items-start mb-2">
                 <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-700 border border-amber-200">
                   ⚡ RUSH (+25%)
@@ -527,22 +708,22 @@
                 <span id="tierRadioRush" class="w-4 h-4 rounded-full border-2 border-slate-300 flex items-center justify-center shrink-0"></span>
               </div>
               <h3 class="font-bold text-sm sm:text-base text-slate-900">Expedited Priority</h3>
-              <p class="text-xs text-slate-500 mt-0.5">Team drivers & non-stop highway transit</p>
+              <p class="text-xs text-slate-500 mt-0.5">Two-driver team & non-stop highway transit</p>
               
               <div class="my-3 sm:my-4">
                 <div class="text-xl sm:text-2xl font-black text-slate-900 font-mono" id="tierPriceRush">$0.00</div>
-                <div class="text-xs text-slate-600 font-semibold mt-0.5">Deposit: <span id="tierDepositRush" class="text-emerald-700 font-mono font-bold">$0.00</span> (50%)</div>
+                <div class="text-xs text-slate-600 font-semibold mt-0.5">Prepaid: <span id="tierPrepaidRush" class="text-emerald-700 font-mono font-bold">$0.00</span> (-5%)</div>
               </div>
 
               <ul class="text-xs text-slate-600 space-y-1.5 border-t border-slate-200/60 pt-2.5">
                 <li class="flex items-center gap-1.5"><i data-lucide="check" class="w-3.5 h-3.5 text-amber-600 shrink-0"></i> 2–4 Days Guaranteed</li>
-                <li class="flex items-center gap-1.5"><i data-lucide="check" class="w-3.5 h-3.5 text-amber-600 shrink-0"></i> 2-Driver Team Dispatch</li>
+                <li class="flex items-center gap-1.5"><i data-lucide="check" class="w-3.5 h-3.5 text-amber-600 shrink-0"></i> Team Driver Priority</li>
                 <li class="flex items-center gap-1.5"><i data-lucide="check" class="w-3.5 h-3.5 text-amber-600 shrink-0"></i> Priority Deck Space</li>
               </ul>
             </div>
 
             <!-- Economy Backhaul (-15%) -->
-            <div id="tierCardEconomy" onclick="selectSpeedTier('economy')" class="cursor-pointer border-2 border-slate-200 hover:border-slate-300 bg-white rounded-2xl p-4 sm:p-5 relative transition interactive-card">
+            <div id="tierCardEconomy" onclick="selectSpeedTier('economy')" class="cursor-pointer border-2 border-slate-200 hover:border-slate-300 bg-white rounded-2xl p-4 sm:p-5 relative transition">
               <div class="flex justify-between items-start mb-2">
                 <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-700 border border-emerald-200">
                   💰 ECONOMY (-15%)
@@ -554,104 +735,160 @@
               
               <div class="my-3 sm:my-4">
                 <div class="text-xl sm:text-2xl font-black text-slate-900 font-mono" id="tierPriceEconomy">$0.00</div>
-                <div class="text-xs text-slate-600 font-semibold mt-0.5">Deposit: <span id="tierDepositEconomy" class="text-emerald-700 font-mono font-bold">$0.00</span> (50%)</div>
+                <div class="text-xs text-slate-600 font-semibold mt-0.5">Prepaid: <span id="tierPrepaidEconomy" class="text-emerald-700 font-mono font-bold">$0.00</span> (-5%)</div>
               </div>
 
               <ul class="text-xs text-slate-600 space-y-1.5 border-t border-slate-200/60 pt-2.5">
                 <li class="flex items-center gap-1.5"><i data-lucide="check" class="w-3.5 h-3.5 text-emerald-600 shrink-0"></i> 6–10 Flexible Days</li>
-                <li class="flex items-center gap-1.5"><i data-lucide="check" class="w-3.5 h-3.5 text-emerald-600 shrink-0"></i> Standard Safety Specs</li>
+                <li class="flex items-center gap-1.5"><i data-lucide="check" class="w-3.5 h-3.5 text-emerald-600 shrink-0"></i> Direct Highway Safety</li>
                 <li class="flex items-center gap-1.5"><i data-lucide="check" class="w-3.5 h-3.5 text-emerald-600 shrink-0"></i> Maximum Rate Savings</li>
               </ul>
             </div>
 
           </div>
 
+          <!-- FIX #1: PAYMENT TERMS TOGGLE (100% PREPAYMENT DEFAULT VS 50% DEPOSIT) -->
+          <div class="space-y-2 pt-1">
+            <label class="block text-xs font-bold text-slate-800">Select Payment Terms</label>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              
+              <!-- 100% Full Prepayment (DEFAULT) -->
+              <label id="lblPayFull" class="cursor-pointer border-2 border-blue-600 bg-blue-50/50 rounded-xl p-4 transition block relative">
+                <div class="flex items-center justify-between mb-1">
+                  <div class="flex items-center space-x-2">
+                    <input type="radio" name="payTerms" value="full" checked onchange="handlePaymentTermsChange('full')" class="text-blue-600 focus:ring-blue-500" />
+                    <span class="font-bold text-sm text-slate-900">100% Full Prepayment</span>
+                  </div>
+                  <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-600 text-white">
+                    SAVE 5% INSTANTLY
+                  </span>
+                </div>
+                <p class="text-xs text-slate-600 ml-6">
+                  Pay in full today. 5% discount applied automatically. Zero balance due upon delivery.
+                </p>
+                <div class="ml-6 mt-2 font-mono font-black text-blue-700 text-base" id="cardFullPriceDisplay">$0.00</div>
+              </label>
+
+              <!-- 50% Reservation Deposit -->
+              <label id="lblPayDeposit" class="cursor-pointer border-2 border-slate-200 hover:border-slate-300 bg-white rounded-xl p-4 transition block relative">
+                <div class="flex items-center justify-between mb-1">
+                  <div class="flex items-center space-x-2">
+                    <input type="radio" name="payTerms" value="deposit" onchange="handlePaymentTermsChange('deposit')" class="text-blue-600 focus:ring-blue-500" />
+                    <span class="font-bold text-sm text-slate-900">50% Reservation Deposit</span>
+                  </div>
+                  <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-slate-100 text-slate-700 border border-slate-300">
+                    FLEXIBLE
+                  </span>
+                </div>
+                <p class="text-xs text-slate-600 ml-6">
+                  Pay 50% today to lock in your carrier driver. Remaining 50% balance COD upon vehicle arrival.
+                </p>
+                <div class="ml-6 mt-2 font-mono font-black text-slate-800 text-base" id="cardDepositPriceDisplay">$0.00</div>
+              </label>
+
+            </div>
+          </div>
+
           <!-- TRANSPARENT FINANCIAL BREAKDOWN BOX -->
-          <div class="bg-slate-900 text-white rounded-2xl p-4 sm:p-7 shadow-xl border border-slate-800 w-full overflow-hidden">
-            <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-3.5 border-b border-slate-800 gap-1.5">
+          <div class="bg-white rounded-2xl p-4 sm:p-7 shadow-sm border border-slate-200/90 w-full overflow-hidden space-y-4">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-3.5 border-b border-slate-100 gap-1.5">
               <div>
-                <span class="text-[10px] sm:text-xs uppercase font-bold tracking-wider text-emerald-400">Guaranteed Contract Rate Breakdown</span>
-                <h3 class="text-base sm:text-lg font-bold">Itemized Freight Transportation Contract</h3>
+                <span class="text-[10px] sm:text-xs uppercase font-bold tracking-wider text-blue-600">All-Inclusive Contract Breakdown</span>
+                <h3 class="text-base sm:text-lg font-bold text-slate-900">Itemized Motor Carrier Transportation Agreement</h3>
               </div>
-              <div class="text-[11px] text-slate-400 truncate">
-                Lane: <span id="breakdownLane" class="text-white font-semibold">Dallas, TX ➔ Los Angeles, CA</span> (<span id="breakdownMiles">1,435</span> mi)
+              <div class="text-[11px] text-slate-500 truncate">
+                Lane: <span id="breakdownLane" class="text-slate-900 font-semibold">Dallas, TX ➔ Los Angeles, CA</span> (<span id="breakdownMiles">1,435</span> mi)
               </div>
             </div>
 
             <!-- Itemized Table -->
-            <div class="py-3.5 space-y-2 text-xs">
-              <div class="flex justify-between items-center text-slate-300 gap-2">
+            <div class="py-1 space-y-2 text-xs">
+              <div class="flex justify-between items-center text-slate-600 gap-2">
                 <span class="truncate">Base Linehaul (<span id="breakdownMilesCalc">1,435</span> mi × $<span id="breakdownRatePerMile">1.40</span>):</span>
-                <span class="font-mono font-semibold shrink-0" id="breakdownLinehaul">$2,009.00</span>
+                <span class="font-mono font-semibold text-slate-900 shrink-0" id="breakdownLinehaul">$2,009.00</span>
               </div>
-              <div class="flex justify-between items-center text-slate-300 gap-2">
+              <div class="flex justify-between items-center text-slate-600 gap-2">
                 <span class="truncate">Diesel Fuel Surcharge (<span id="breakdownFuelPct">12%</span>):</span>
-                <span class="font-mono font-semibold shrink-0" id="breakdownFuel">$241.08</span>
+                <span class="font-mono font-semibold text-slate-900 shrink-0" id="breakdownFuel">$241.08</span>
               </div>
-              <div class="flex justify-between items-center text-slate-300 gap-2">
+              <div class="flex justify-between items-center text-slate-600 gap-2">
                 <span class="truncate">Pickup/Delivery Method (<span id="breakdownServiceText">Door-to-Door</span>):</span>
-                <span class="font-mono font-semibold shrink-0" id="breakdownDoor">$120.00</span>
+                <span class="font-mono font-semibold text-slate-900 shrink-0" id="breakdownDoor">$120.00</span>
               </div>
-              <div id="breakdownInopRow" class="hidden flex justify-between items-center text-amber-400 gap-2">
+              <div class="flex justify-between items-center text-slate-600 gap-2">
+                <span class="truncate">Vehicle Classification (<span id="breakdownClassText">Pickup Truck</span>):</span>
+                <span class="font-mono font-semibold text-slate-900 shrink-0" id="breakdownClassFee">+$180.00</span>
+              </div>
+              <div id="breakdownInopRow" class="hidden flex justify-between items-center text-amber-700 gap-2">
                 <span class="truncate">Inoperable Winch Fee:</span>
-                <span class="font-mono font-semibold shrink-0" id="breakdownInop">$150.00</span>
+                <span class="font-mono font-semibold shrink-0" id="breakdownInop">+$150.00</span>
               </div>
-              <div id="breakdownSpeedAdjRow" class="hidden flex justify-between items-center text-blue-300 gap-2">
+              <div id="breakdownSpeedAdjRow" class="hidden flex justify-between items-center text-blue-600 gap-2">
                 <span id="breakdownSpeedAdjLabel" class="truncate">Speed Adjustment:</span>
                 <span class="font-mono font-semibold shrink-0" id="breakdownSpeedAdj">$0.00</span>
+              </div>
+              <div id="breakdownPrepaidDiscountRow" class="flex justify-between items-center text-emerald-700 font-semibold gap-2 pt-1 border-t border-slate-100">
+                <span class="truncate">100% Prepayment Discount (5% Instant Incentive):</span>
+                <span class="font-mono font-bold shrink-0" id="breakdownPrepaidDiscount">-$127.50</span>
               </div>
             </div>
 
             <!-- THREE CORE FINANCIAL FIGURES -->
-            <div class="pt-3.5 border-t border-slate-800 grid grid-cols-1 sm:grid-cols-3 gap-2.5 sm:gap-4">
+            <div class="pt-3.5 border-t border-slate-200 grid grid-cols-1 sm:grid-cols-3 gap-2.5 sm:gap-4">
               
               <!-- Total Contract Rate -->
-              <div class="bg-slate-800/80 rounded-xl p-3.5 border border-slate-700/60">
-                <div class="text-[11px] text-slate-400 font-medium">Total Contract Rate</div>
-                <div class="text-xl sm:text-2xl font-black font-mono text-white mt-1" id="breakdownTotalRate">$2,370.08</div>
-                <div class="text-[10px] text-slate-400 mt-0.5">Guaranteed linehaul quote</div>
+              <div class="bg-slate-50 rounded-xl p-3.5 border border-slate-200">
+                <div class="text-[11px] text-slate-500 font-medium">Standard Contract Rate</div>
+                <div class="text-xl sm:text-2xl font-black font-mono text-slate-900 mt-1" id="breakdownTotalRate">$2,550.08</div>
+                <div class="text-[10px] text-slate-400 mt-0.5">All taxes & fees included</div>
               </div>
 
-              <!-- 50% Deposit Due Today -->
-              <div class="bg-emerald-950/60 rounded-xl p-3.5 border border-emerald-800/60">
-                <div class="text-[11px] text-emerald-400 font-bold flex items-center justify-between">
-                  <span>50% Lock-in Deposit</span>
-                  <span class="text-[9px] px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-bold">DUE TODAY</span>
+              <!-- Amount Paid Today -->
+              <div class="bg-blue-50/70 rounded-xl p-3.5 border border-blue-200">
+                <div class="text-[11px] text-blue-800 font-bold flex items-center justify-between">
+                  <span id="sumDueLabel">Total Paid Today (Prepaid)</span>
+                  <span id="sumDueTag" class="text-[9px] px-1.5 py-0.5 rounded bg-blue-600 text-white font-bold">DUE TODAY</span>
                 </div>
-                <div class="text-xl sm:text-2xl font-black font-mono text-emerald-400 mt-1" id="breakdownDepositDue">-$1,185.04</div>
-                <div class="text-[10px] text-emerald-300/80 mt-0.5">Secures equipment & driver</div>
+                <div class="text-xl sm:text-2xl font-black font-mono text-blue-700 mt-1" id="breakdownPaidToday">$2,422.58</div>
+                <div class="text-[10px] text-blue-600/80 mt-0.5" id="sumDueSubtext">5% discount locked in</div>
               </div>
 
-              <!-- Remaining Balance COD Upon Delivery -->
-              <div class="bg-blue-950/60 rounded-xl p-3.5 border border-blue-800/60">
-                <div class="text-[11px] text-blue-300 font-bold flex items-center justify-between">
-                  <span>Remaining COD Balance</span>
-                  <span class="text-[9px] px-1.5 py-0.5 rounded bg-blue-500/20 text-blue-300 font-bold">UPON DELIVERY</span>
+              <!-- Remaining Balance COD (Hidden when 100% Prepaid) -->
+              <div id="rowSumRemaining" class="hidden bg-emerald-50 rounded-xl p-3.5 border border-emerald-200">
+                <div class="text-[11px] text-emerald-800 font-bold flex items-center justify-between">
+                  <span>Balance COD on Arrival</span>
+                  <span class="text-[9px] px-1.5 py-0.5 rounded bg-emerald-600 text-white font-bold">UPON DELIVERY</span>
                 </div>
-                <div class="text-xl sm:text-2xl font-black font-mono text-blue-300 mt-1" id="breakdownRemainingCOD">$1,185.04</div>
-                <div class="text-[10px] text-slate-400 mt-0.5">Payable to driver upon arrival</div>
+                <div class="text-xl sm:text-2xl font-black font-mono text-emerald-700 mt-1" id="breakdownRemainingCOD">$1,275.04</div>
+                <div class="text-[10px] text-slate-500 mt-0.5">Payable to driver upon arrival</div>
               </div>
 
             </div>
 
-            <!-- ACTION BAR -->
-            <div class="mt-5 pt-4 border-t border-slate-800 flex flex-col gap-3">
-              <div class="flex items-center space-x-2 text-[11px] text-slate-400">
-                <i data-lucide="shield-check" class="w-4 h-4 text-emerald-400 shrink-0"></i>
-                <span>$100,000 Cargo Insurance & Live Hostinger SMTP Confirmation</span>
+            <!-- ACTION BUTTONS & NATIVE SMS -->
+            <div class="mt-5 pt-4 border-t border-slate-100 flex flex-col gap-3">
+              <div class="flex flex-wrap items-center justify-between gap-2 text-[11px] text-slate-500">
+                <div class="flex items-center space-x-1.5">
+                  <i data-lucide="shield-check" class="w-4 h-4 text-emerald-600 shrink-0"></i>
+                  <span>USDOT #3892104 • $100,000 Cargo Liability Insurance Included</span>
+                </div>
+                <div class="flex items-center space-x-1.5 text-blue-600 font-semibold">
+                  <i data-lucide="file-text" class="w-3.5 h-3.5 shrink-0"></i>
+                  <span>Official Bill of Lading (BOL) Generated Instantly</span>
+                </div>
               </div>
 
-              <div class="flex flex-col sm:flex-row items-stretch gap-2.5 w-full">
+              <div class="flex flex-col sm:flex-row items-stretch gap-2.5 w-full pt-1">
                 <!-- Native SMS Button -->
                 <a id="step3NativeSmsBtn" href="#" class="w-full sm:flex-1 px-4 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl transition flex items-center justify-center gap-1.5 shadow-sm">
                   <i data-lucide="message-square" class="w-4 h-4"></i>
                   <span>💬 Text Quote to Dispatch (0s)</span>
                 </a>
 
-                <!-- Pay 50% Deposit & Issue BOL Button -->
-                <button type="button" onclick="openDepositPaymentModal()" class="w-full sm:flex-1 px-5 py-3.5 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs sm:text-sm rounded-xl shadow-lg transition flex items-center justify-center gap-2">
+                <!-- Pay & Confirm Button (Dynamic CTA) -->
+                <button type="button" id="mainBookingSubmitBtn" onclick="openDepositPaymentModal()" class="w-full sm:flex-1 px-5 py-3.5 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs sm:text-sm rounded-xl shadow-md transition flex items-center justify-center gap-2">
                   <i data-lucide="credit-card" class="w-4 h-4"></i>
-                  <span>Lock-in 50% Deposit (<span id="btnPayAmount">$1,185.04</span>)</span>
+                  <span id="mainBookingSubmitText">Pay Full Amount ($2,422.58) & Confirm Booking</span>
                 </button>
               </div>
             </div>
@@ -662,7 +899,7 @@
           <div class="flex justify-start pt-1">
             <button type="button" onclick="goToStep(2)" class="w-full sm:w-auto px-5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-semibold rounded-xl transition flex items-center justify-center gap-2">
               <i data-lucide="arrow-left" class="w-4 h-4"></i>
-              <span>Back to Cargo Details</span>
+              <span>Back to Vehicle Details</span>
             </button>
           </div>
 
@@ -676,7 +913,7 @@
     <!-- TAB 2: LIVE SHIPMENT TRACKER                                             -->
     <!-- ========================================================================= -->
     <section id="tabTrackerSection" class="hidden space-y-4 sm:space-y-6 w-full">
-      <div class="bg-white rounded-2xl p-4 sm:p-8 shadow-sm border border-slate-200 w-full">
+      <div class="bg-white rounded-2xl p-4 sm:p-8 shadow-sm border border-slate-200/90 w-full">
         <div class="max-w-2xl">
           <div class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-blue-50 text-blue-700 text-xs font-bold mb-2">
             <i data-lucide="radar" class="w-3.5 h-3.5"></i>
@@ -707,7 +944,7 @@
                   IN TRANSIT • ON HIGHWAY
                 </span>
               </div>
-              <p id="trkResultManifest" class="text-xs text-slate-600 font-semibold mt-1">2024 Ford F-150 Crew Cab | Dallas, TX ➔ Los Angeles, CA</p>
+              <p id="trkResultManifest" class="text-xs text-slate-700 font-semibold mt-1">2024 Ford F-150 Crew Cab | Dallas, TX ➔ Los Angeles, CA</p>
             </div>
             
             <div class="flex items-center gap-2">
@@ -726,13 +963,13 @@
           <div class="relative py-2">
             <div class="grid grid-cols-1 sm:grid-cols-4 gap-2.5 sm:gap-4 text-xs">
               
-              <!-- 1. Deposit Paid -->
+              <!-- 1. Booking Verified -->
               <div class="bg-emerald-50 rounded-xl p-3.5 border border-emerald-200">
                 <div class="w-6 h-6 rounded-full bg-emerald-600 text-white flex items-center justify-center font-bold text-xs mb-1.5">
                   ✓
                 </div>
-                <div class="font-bold text-emerald-900">50% Deposit Received</div>
-                <div class="text-[11px] text-emerald-700 mt-0.5">Funds verified & rig assigned</div>
+                <div class="font-bold text-emerald-900">Payment Verified</div>
+                <div class="text-[11px] text-emerald-700 mt-0.5">Booking secured & truck locked</div>
               </div>
 
               <!-- 2. Carrier Assigned & En Route -->
@@ -740,8 +977,8 @@
                 <div class="w-6 h-6 rounded-full bg-emerald-600 text-white flex items-center justify-center font-bold text-xs mb-1.5">
                   ✓
                 </div>
-                <div class="font-bold text-emerald-900">Rig Assigned & En Route</div>
-                <div class="text-[11px] text-emerald-700 mt-0.5">Driver: Marcus Vance (Truck #42)</div>
+                <div class="font-bold text-emerald-900">Truck Assigned & En Route</div>
+                <div class="text-[11px] text-emerald-700 mt-0.5">Driver: Marcus Vance (Carrier #42)</div>
               </div>
 
               <!-- 3. Cargo Loaded (Active) -->
@@ -753,12 +990,12 @@
                 <div class="text-[11px] text-blue-700 mt-0.5">Interstate 10 Westbound</div>
               </div>
 
-              <!-- 4. Delivery & COD -->
+              <!-- 4. Delivery & Signoff -->
               <div class="bg-slate-50 rounded-xl p-3.5 border border-slate-200 opacity-60">
                 <div class="w-6 h-6 rounded-full bg-slate-400 text-white flex items-center justify-center font-bold text-xs mb-1.5">
                   4
                 </div>
-                <div class="font-bold text-slate-700">Delivery & Balance COD</div>
+                <div class="font-bold text-slate-700">Delivery & Final Inspection</div>
                 <div class="text-[11px] text-slate-500 mt-0.5">Est. Arrival in 2 Days</div>
               </div>
 
@@ -769,18 +1006,18 @@
     </section>
 
     <!-- ========================================================================= -->
-    <!-- TAB 3: CARRIER DISPATCH DASHBOARD (ADMIN HUB)                            -->
+    <!-- TAB 3: CARRIER DISPATCH DASHBOARD (ADMIN HUB - FIX #7 & #8)               -->
     <!-- ========================================================================= -->
     <section id="tabAdminSection" class="hidden space-y-4 sm:space-y-6 w-full">
 
-      <!-- 1. ADMIN LOGIN GATE -->
+      <!-- 1. ADMIN LOGIN GATE (Protected with admin123 + Auto-fill & Copy) -->
       <div id="adminLoginGate" class="max-w-md mx-auto bg-white rounded-2xl p-5 sm:p-8 shadow-sm border border-slate-200 space-y-5 w-full">
         <div class="text-center space-y-1.5">
           <div class="w-11 h-11 rounded-2xl bg-slate-900 text-white mx-auto flex items-center justify-center shadow-md">
             <i data-lucide="shield-check" class="w-5 h-5 text-emerald-400"></i>
           </div>
           <h2 class="text-lg sm:text-xl font-black text-slate-900">Carrier Dispatch Portal</h2>
-          <p class="text-xs text-slate-500">Internal fleet operations & pricing matrix</p>
+          <p class="text-xs text-slate-500">Fleet rate controls, manifest archive & dispatch notifications</p>
         </div>
 
         <form id="adminLoginForm" onsubmit="handleAdminLoginSubmit(event)" class="space-y-3.5">
@@ -791,13 +1028,13 @@
           </div>
 
           <div id="adminLoginError" class="hidden p-2.5 rounded-lg bg-rose-50 border border-rose-200 text-rose-700 text-xs font-medium">
-            Incorrect password. Please use master key <code class="font-bold">admin123</code>.
+            Incorrect password. Please use the master key <code class="font-bold">admin123</code>.
           </div>
 
-          <!-- Convenience helpers (Auto-fill & Copy) -->
+          <!-- Convenience helpers (Auto-fill & Copy) directly under input (Fix #8) -->
           <div class="bg-slate-50 rounded-xl p-3 border border-slate-200 text-xs space-y-2">
             <div class="flex items-center justify-between text-slate-600">
-              <span>Demo Key:</span>
+              <span>Admin Master Key:</span>
               <code class="font-mono font-bold text-slate-900 bg-white px-2 py-0.5 rounded border border-slate-200">admin123</code>
             </div>
             <div class="grid grid-cols-2 gap-2 pt-1">
@@ -814,7 +1051,7 @@
 
           <button type="submit" class="w-full py-3 bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs rounded-xl shadow-md transition flex items-center justify-center gap-2">
             <i data-lucide="unlock" class="w-4 h-4"></i>
-            <span>Authenticate & Unlock</span>
+            <span>Authenticate & Unlock Dashboard</span>
           </button>
         </form>
       </div>
@@ -832,17 +1069,17 @@
                 AUTH GRANTED
               </span>
             </div>
-            <p class="text-xs text-slate-500">CarrierDirect Logistics LLC • USDOT #3892104</p>
+            <p class="text-xs text-slate-500">CarrierDirect Logistics LLC • USDOT #3892104 • Fleet Operations</p>
           </div>
 
           <div class="flex items-center space-x-2">
             <button onclick="testHostingerSmtp()" class="flex-1 sm:flex-none px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-lg transition flex items-center justify-center gap-1">
               <i data-lucide="mail-check" class="w-3.5 h-3.5 text-blue-600"></i>
-              <span>Test SMTP</span>
+              <span>Test Email Notification</span>
             </button>
             <button onclick="adminLogout()" class="flex-1 sm:flex-none px-3 py-2 bg-rose-50 hover:bg-rose-100 text-rose-700 text-xs font-bold rounded-lg transition flex items-center justify-center gap-1 border border-rose-200">
               <i data-lucide="lock" class="w-3.5 h-3.5"></i>
-              <span>[Lock]</span>
+              <span>[Lock / Logout]</span>
             </button>
           </div>
         </div>
@@ -862,30 +1099,30 @@
           </div>
 
           <div class="bg-white rounded-xl p-3 sm:p-4 border border-slate-200 shadow-sm">
-            <span class="text-[11px] text-emerald-600 font-bold">50% Deposits</span>
-            <div class="text-xl sm:text-2xl font-black text-emerald-600 font-mono mt-1" id="kpiDepositsCollected">$4,740.00</div>
-            <span class="text-[9px] text-emerald-700 font-medium">Locked In</span>
+            <span class="text-[11px] text-emerald-600 font-bold">Total Prepaid / Deposits</span>
+            <div class="text-xl sm:text-2xl font-black text-emerald-600 font-mono mt-1" id="kpiDepositsCollected">$6,740.00</div>
+            <span class="text-[9px] text-emerald-700 font-medium">Funds Secured</span>
           </div>
 
           <div class="bg-white rounded-xl p-3 sm:p-4 border border-slate-200 shadow-sm">
-            <span class="text-[11px] text-blue-600 font-bold">Pending COD</span>
-            <div class="text-xl sm:text-2xl font-black text-blue-600 font-mono mt-1" id="kpiPendingCOD">$4,740.00</div>
+            <span class="text-[11px] text-blue-600 font-bold">Pending COD Balance</span>
+            <div class="text-xl sm:text-2xl font-black text-blue-600 font-mono mt-1" id="kpiPendingCOD">$2,740.00</div>
             <span class="text-[9px] text-slate-400">Due upon signoff</span>
           </div>
         </div>
 
-        <!-- SETTABLE CARRIER PRICING CONTROLS MATRIX (Blueprint Section 4B) -->
+        <!-- SETTABLE CARRIER PRICING CONTROLS MATRIX (Blueprint Section 4) -->
         <div class="bg-white rounded-2xl p-4 sm:p-6 shadow-sm border border-slate-200 space-y-3.5">
           <div class="flex items-center justify-between border-b border-slate-100 pb-2.5">
             <div>
               <h3 class="font-bold text-xs sm:text-sm text-slate-900 flex items-center gap-1.5">
                 <i data-lucide="sliders" class="w-4 h-4 text-blue-600"></i>
-                Carrier Settable Pricing Formula Controls
+                Carrier Settable Rates Matrix
               </h3>
               <p class="text-[11px] text-slate-500">Directly updates public rate calculator formula in real-time</p>
             </div>
             <button onclick="resetPricingDefaults()" class="text-[11px] font-semibold text-slate-500 hover:text-slate-800 underline">
-              Reset
+              Reset Factory Defaults
             </button>
           </div>
 
@@ -909,7 +1146,7 @@
             </div>
 
             <div>
-              <label class="block text-[10px] font-bold text-slate-700 mb-1">Fuel (%)</label>
+              <label class="block text-[10px] font-bold text-slate-700 mb-1">Fuel Surcharge (%)</label>
               <input type="number" step="1" id="cfgFuelSurcharge" value="12"
                 class="w-full px-2.5 py-1.5 bg-slate-50 border border-slate-300 rounded-lg text-xs font-mono font-bold text-slate-900 outline-none" />
             </div>
@@ -927,8 +1164,8 @@
             </div>
 
             <div>
-              <label class="block text-[10px] font-bold text-slate-700 mb-1">Deposit (%)</label>
-              <input type="number" step="5" id="cfgDepositPercent" value="50"
+              <label class="block text-[10px] font-bold text-slate-700 mb-1">Prepay Disc (%)</label>
+              <input type="number" step="1" id="cfgPrepayDiscount" value="5"
                 class="w-full px-2.5 py-1.5 bg-slate-50 border border-slate-300 rounded-lg text-xs font-mono font-bold text-slate-900 outline-none" />
             </div>
           </div>
@@ -936,19 +1173,22 @@
           <div class="flex justify-end pt-1">
             <button type="button" onclick="saveCarrierPricing()" class="w-full sm:w-auto px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-xl shadow-md transition flex items-center justify-center gap-1.5">
               <i data-lucide="save" class="w-3.5 h-3.5"></i>
-              <span>Save Carrier Pricing Matrix</span>
+              <span>Save Rates Matrix</span>
             </button>
           </div>
         </div>
 
-        <!-- LOAD DISPATCH MANIFEST TABLE (Scrollable Container) -->
+        <!-- LOAD DISPATCH MANIFEST ARCHIVE TABLE -->
         <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden w-full">
           <div class="p-3.5 sm:p-5 border-b border-slate-100 flex items-center justify-between">
             <div>
-              <h3 class="font-bold text-xs sm:text-sm text-slate-900">Live Load Dispatch Manifest</h3>
-              <p class="text-[11px] text-slate-500">Real-time bookings and active Bills of Lading</p>
+              <h3 class="font-bold text-xs sm:text-sm text-slate-900">Live Load Dispatch Manifest & Archival</h3>
+              <p class="text-[11px] text-slate-500">Confirmed shipper bookings with direct Bill of Lading preview</p>
             </div>
-            <span class="text-[10px] text-slate-400 font-mono">DOT: #3892104</span>
+            <button onclick="exportManifestCsv()" class="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 text-[11px] font-bold rounded-md flex items-center gap-1 transition">
+              <i data-lucide="download" class="w-3 h-3"></i>
+              <span>Export CSV</span>
+            </button>
           </div>
 
           <!-- Table Container with Horizontal Scroll Support -->
@@ -959,16 +1199,16 @@
                   <th class="py-2.5 px-3">Tracking / Date</th>
                   <th class="py-2.5 px-3">Shipper</th>
                   <th class="py-2.5 px-3">Route</th>
-                  <th class="py-2.5 px-3">Cargo</th>
-                  <th class="py-2.5 px-3 text-right">Total</th>
-                  <th class="py-2.5 px-3 text-right">Deposit</th>
-                  <th class="py-2.5 px-3 text-right">COD</th>
+                  <th class="py-2.5 px-3">Vehicle Details</th>
+                  <th class="py-2.5 px-3 text-right">Contract Total</th>
+                  <th class="py-2.5 px-3 text-right">Paid Today</th>
+                  <th class="py-2.5 px-3 text-right">Balance COD</th>
                   <th class="py-2.5 px-3 text-center">Status</th>
                   <th class="py-2.5 px-3 text-center">Actions</th>
                 </tr>
               </thead>
               <tbody id="adminManifestTableBody" class="divide-y divide-slate-100 text-slate-700 font-medium">
-                <!-- Dynamically populated via app.js -->
+                <!-- Dynamically populated via JavaScript -->
               </tbody>
             </table>
           </div>
@@ -981,7 +1221,7 @@
   </main>
 
   <!-- ========================================================================= -->
-  <!-- MODAL 1: 50% DEPOSIT CHECKOUT MODAL                                      -->
+  <!-- MODAL 1: CHECKOUT & PAYMENT MODAL                                         -->
   <!-- ========================================================================= -->
   <div id="depositCheckoutModal" class="fixed inset-0 z-50 hidden bg-slate-900/70 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
     <div class="bg-white rounded-2xl max-w-md w-full shadow-2xl border border-slate-200 overflow-hidden my-auto">
@@ -993,8 +1233,8 @@
             <i data-lucide="lock" class="w-4 h-4"></i>
           </div>
           <div>
-            <h3 class="font-bold text-sm">Secure 50% Deposit Payment</h3>
-            <p class="text-[10px] text-slate-400">CarrierDirect Logistics • DOT #3892104</p>
+            <h3 class="font-bold text-sm" id="modalPaymentTitle">Secure Transport Payment</h3>
+            <p class="text-[10px] text-slate-400">CarrierDirect Logistics • USDOT #3892104</p>
           </div>
         </div>
         <button onclick="closeDepositPaymentModal()" class="text-slate-400 hover:text-white transition p-1">
@@ -1005,29 +1245,29 @@
       <div class="p-4 sm:p-6 space-y-3.5">
         
         <!-- Summary Box -->
-        <div class="bg-emerald-50 rounded-xl p-3.5 border border-emerald-200 flex justify-between items-center">
+        <div class="bg-blue-50/80 rounded-xl p-3.5 border border-blue-200 flex justify-between items-center">
           <div>
-            <span class="text-[11px] text-emerald-800 font-medium">Required Upfront Lock-in:</span>
-            <div class="text-xl sm:text-2xl font-black font-mono text-emerald-700" id="modalDepositAmount">$1,185.04</div>
-            <span class="text-[10px] text-emerald-600">Remaining 50% balance COD upon delivery</span>
+            <span class="text-[11px] text-blue-900 font-medium" id="modalPaymentAmountLabel">Amount Due Today:</span>
+            <div class="text-xl sm:text-2xl font-black font-mono text-blue-700" id="modalDepositAmount">$2,422.58</div>
+            <span class="text-[10px] text-slate-500" id="modalPaymentAmountSub">All-inclusive rate • $100K Cargo Insurance Included</span>
           </div>
-          <span class="px-2 py-0.5 rounded bg-emerald-600 text-white font-bold text-[10px] shrink-0">50% DEPOSIT</span>
+          <span class="px-2 py-0.5 rounded bg-blue-600 text-white font-bold text-[10px] shrink-0" id="modalPaymentTypeBadge">100% PREPAID</span>
         </div>
 
         <div class="text-[11px] space-y-1 text-slate-600 bg-slate-50 p-2.5 rounded-lg border border-slate-200">
           <div class="flex justify-between truncate"><span>Lane:</span> <strong id="modalSummaryRoute" class="text-slate-800 truncate ml-2">Dallas ➔ Los Angeles</strong></div>
-          <div class="flex justify-between truncate"><span>Cargo:</span> <strong id="modalSummaryItem" class="text-slate-800 truncate ml-2">2024 Ford F-150</strong></div>
+          <div class="flex justify-between truncate"><span>Vehicle:</span> <strong id="modalSummaryItem" class="text-slate-800 truncate ml-2">2024 Ford F-150</strong></div>
           <div class="flex justify-between truncate"><span>Shipper:</span> <strong id="modalSummaryShipper" class="text-slate-800 truncate ml-2">John Anderson</strong></div>
         </div>
 
-        <!-- Simulated Card Details -->
+        <!-- Card Details -->
         <div class="space-y-2.5 pt-1">
           <div>
             <label class="block text-[11px] font-semibold text-slate-700 mb-0.5">Cardholder Name</label>
             <input type="text" id="payCardName" value="John Anderson" class="w-full px-3 py-2 bg-white border border-slate-300 rounded-lg text-xs font-medium text-slate-800 outline-none" />
           </div>
           <div>
-            <label class="block text-[11px] font-semibold text-slate-700 mb-0.5">Card Number (Live Stripe / Simulated)</label>
+            <label class="block text-[11px] font-semibold text-slate-700 mb-0.5">Card Number</label>
             <div class="relative">
               <input type="text" id="payCardNumber" value="4242 •••• •••• 4242" class="w-full px-3 py-2 bg-white border border-slate-300 rounded-lg text-xs font-mono font-bold text-slate-800 outline-none" />
               <div class="absolute right-3 top-2.5 text-slate-400">
@@ -1048,17 +1288,17 @@
         </div>
 
         <div id="paymentLoadingIndicator" class="hidden text-center py-1.5 text-xs font-bold text-blue-600 animate-pulse">
-          Authorizing 50% deposit & dispatching Hostinger emails...
+          Processing payment authorization & issuing Bill of Lading...
         </div>
 
         <!-- Confirm Action Button -->
-        <button type="button" id="confirmDepositBtn" onclick="processDepositPayment()" class="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs sm:text-sm rounded-xl shadow-lg transition flex items-center justify-center gap-2">
+        <button type="button" id="confirmDepositBtn" onclick="processDepositPayment()" class="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs sm:text-sm rounded-xl shadow-lg transition flex items-center justify-center gap-2">
           <i data-lucide="shield-check" class="w-4 h-4"></i>
-          <span>Authorize 50% Deposit & Issue BOL</span>
+          <span id="confirmDepositBtnText">Authorize Payment & Issue Official BOL</span>
         </button>
 
         <p class="text-[9px] text-center text-slate-400">
-          256-Bit SSL Encrypted • Funds held in escrow until carrier rig assignment
+          256-Bit SSL Encrypted • USDOT Licensed Motor Carrier Direct Booking
         </p>
 
       </div>
@@ -1067,7 +1307,7 @@
 
 
   <!-- ========================================================================= -->
-  <!-- MODAL 2: OFFICIAL BILL OF LADING (BOL) MODAL                             -->
+  <!-- MODAL 2: OFFICIAL BILL OF LADING (BOL) MODAL (Printable & SMS-ready)     -->
   <!-- ========================================================================= -->
   <div id="printableBolModal" class="fixed inset-0 z-50 hidden bg-slate-900/80 backdrop-blur-sm flex items-center justify-center p-2 sm:p-4 overflow-y-auto">
     <div class="bg-white rounded-2xl max-w-3xl w-full shadow-2xl border border-slate-300 my-auto overflow-hidden bol-print-container">
@@ -1079,10 +1319,10 @@
           <span class="font-bold text-xs uppercase tracking-wider text-emerald-400">Official Bill of Lading (BOL) Issued</span>
         </div>
         <div class="flex flex-wrap items-center gap-1.5 justify-end">
-          <!-- Native SMS Button -->
-          <a id="invModalNativeSmsBtn" href="#" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-lg transition flex items-center space-x-1 shadow-sm">
+          <!-- 1-Click Native SMS Button (Section 3B) -->
+          <a id="modalNativeSmsBtn" href="#" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-lg transition flex items-center space-x-1 shadow-sm">
             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/></svg>
-            <span>💬 Text BOL</span>
+            <span>💬 Text BOL to Dispatch (0s)</span>
           </a>
           <!-- Print Button -->
           <button onclick="window.print()" class="px-2.5 py-1.5 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-lg transition flex items-center gap-1 shadow-sm">
@@ -1110,12 +1350,12 @@
             <h1 class="text-lg sm:text-2xl font-black text-slate-900 tracking-tight">CarrierDirect Logistics LLC</h1>
             <p class="text-xs text-slate-600 font-medium">FMCSA Authorized Motor Carrier & Freight Broker</p>
             <div class="text-[11px] text-slate-500 font-mono mt-0.5">
-              USDOT: <strong>#3892104</strong> | MC: <strong>#941824</strong> | Dispatch: <strong>+1 (214) 778-9921</strong>
+              USDOT: <strong>#3892104</strong> | MC: <strong>#941824</strong> | 24/7 Dispatch: <strong>+1 (214) 778-9921</strong>
             </div>
           </div>
           <div class="text-left sm:text-right">
-            <div class="inline-block px-2.5 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold text-[11px] border border-emerald-300">
-              ✓ 50% DEPOSIT CONFIRMED
+            <div id="bolPaymentBadge" class="inline-block px-2.5 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold text-[11px] border border-emerald-300">
+              ✓ 100% PREPAID (CONFIRMED)
             </div>
             <div class="text-xs font-mono font-bold text-slate-900 mt-1">BOL #: <span id="bolDocNumber">BOL-2026-9104</span></div>
             <div class="text-[10px] text-slate-500">Date: <span id="bolDocDate">Oct 24, 2026</span></div>
@@ -1147,8 +1387,8 @@
             <thead>
               <tr class="bg-slate-100 border-y border-slate-300 font-bold uppercase text-[10px] text-slate-600">
                 <th class="py-2 px-3">Tracking ID</th>
-                <th class="py-2 px-3">Cargo Description</th>
-                <th class="py-2 px-3">Condition</th>
+                <th class="py-2 px-3">Vehicle Details</th>
+                <th class="py-2 px-3">Service Type</th>
                 <th class="py-2 px-3">Speed</th>
                 <th class="py-2 px-3 text-right">Distance</th>
               </tr>
@@ -1157,8 +1397,8 @@
               <tr>
                 <td class="py-2.5 px-3 font-mono font-bold text-blue-600" id="bolManifestTrk">TRK-9104</td>
                 <td class="py-2.5 px-3 font-bold text-slate-900" id="bolManifestItem">2024 Ford F-150 Crew Cab</td>
-                <td class="py-2.5 px-3 text-slate-600" id="bolManifestCondition">4,800 lbs • Operable</td>
-                <td class="py-2.5 px-3 text-slate-600" id="bolManifestService">Standard Linehaul</td>
+                <td class="py-2.5 px-3 text-slate-600" id="bolManifestServiceType">Door-to-Door • Open Carrier</td>
+                <td class="py-2.5 px-3 text-slate-600" id="bolManifestSpeed">Standard Transit</td>
                 <td class="py-2.5 px-3 text-right font-mono font-bold" id="bolManifestMiles">1,435 Miles</td>
               </tr>
             </tbody>
@@ -1169,24 +1409,28 @@
         <div class="bg-slate-50 p-3.5 sm:p-4 rounded-xl border border-slate-200 text-xs space-y-1.5">
           <div class="flex justify-between items-center text-slate-600">
             <span>Total Contract Rate:</span>
-            <strong class="font-mono text-slate-900 text-sm" id="bolTotalRate">$2,370.08</strong>
+            <strong class="font-mono text-slate-900 text-sm" id="bolTotalRate">$2,550.08</strong>
           </div>
-          <div class="flex justify-between items-center text-emerald-700">
-            <span>Amount Paid Today (50% Deposit):</span>
-            <strong class="font-mono text-emerald-700 text-sm" id="bolPaidDeposit">-$1,185.04</strong>
+          <div class="flex justify-between items-center text-emerald-700" id="bolPrepayDiscountRow">
+            <span>100% Prepayment Discount (5%):</span>
+            <strong class="font-mono text-emerald-700 text-sm" id="bolPrepayDiscount">-$127.50</strong>
+          </div>
+          <div class="flex justify-between items-center text-blue-800">
+            <span id="bolPaidLabel">Amount Paid Today:</span>
+            <strong class="font-mono text-blue-800 text-sm" id="bolPaidDeposit">$2,422.58</strong>
           </div>
           <div class="flex justify-between items-center text-slate-900 pt-1.5 border-t border-slate-200 font-bold text-sm">
-            <span class="text-blue-900">Balance Due Upon Delivery (COD):</span>
-            <strong class="font-mono text-blue-700 text-base" id="bolRemainingCOD">$1,185.04</strong>
+            <span class="text-slate-800">Balance Due Upon Delivery:</span>
+            <strong class="font-mono text-base" id="bolRemainingCOD">$0.00 (PAID IN FULL)</strong>
           </div>
           <div class="text-[10px] text-slate-500 pt-0.5 font-mono truncate">
-            Ref: <code id="bolTxnRef">TXN-STRIPE-489201</code> | Escrow Verified
+            Payment Ref: <code id="bolTxnRef">TXN-PAY-489201</code> | USDOT Bonded & Insured
           </div>
         </div>
 
-        <!-- Terms & Conditions of Carriage -->
+        <!-- Terms of Carriage -->
         <div class="text-[10px] text-slate-500 leading-normal border-t border-slate-200 pt-2.5">
-          <strong>TERMS:</strong> Carrier agrees to transport shipment in accordance with FMCSA regulations. Remaining 50% balance COD payable upon delivery to driver prior to unloading.
+          <strong>TERMS OF CARRIAGE:</strong> Carrier agrees to transport vehicle in accordance with Federal Motor Carrier Safety Administration (FMCSA) regulations. Comprehensive $100,000 cargo liability insurance is active throughout highway transit.
         </div>
 
         <!-- Signatures Block -->
@@ -1215,22 +1459,22 @@
   </div>
 
 
-  <!-- FOOTER -->
-  <footer class="bg-slate-900 text-slate-400 text-xs py-6 sm:py-8 border-t border-slate-800 mt-auto w-full">
+  <!-- FOOTER (Zero mention of SMTP or internal notes) -->
+  <footer class="bg-white text-slate-500 text-xs py-6 sm:py-8 border-t border-slate-200 mt-auto w-full">
     <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 flex flex-col sm:flex-row justify-between items-center gap-3 text-center sm:text-left">
       <div>
-        <span class="font-bold text-white">CarrierDirect Logistics LLC</span> • US DOT #3892104 • MC #941824
-        <p class="text-[11px] text-slate-500 mt-0.5">Automated Freight Quotation, 50% Deposit & Hostinger SMTP Dispatch Engine</p>
+        <span class="font-bold text-slate-900">CarrierDirect Logistics LLC</span> • USDOT #3892104 • MC #941824
+        <p class="text-[11px] text-slate-400 mt-0.5">Automated Freight & Auto Transport Quotation, Booking & Digital Bill of Lading</p>
       </div>
-      <div class="flex items-center space-x-3 text-slate-400 text-xs">
-        <a href="tel:+12147789921" class="hover:text-white font-mono">+1 (214) 778-9921</a>
+      <div class="flex items-center space-x-3 text-slate-500 text-xs">
+        <a href="tel:+12147789921" class="hover:text-blue-600 font-mono">+1 (214) 778-9921</a>
         <span>•</span>
-        <button onclick="switchTab('admin')" class="hover:text-white">Admin Login</button>
+        <button onclick="switchTab('admin')" class="hover:text-blue-600">Carrier Dispatch Hub</button>
       </div>
     </div>
   </footer>
 
-  <!-- Core JavaScript Logic -->
+  <!-- SCRIPT ENGINE IMPLEMENTATION (ALL 8 RESOLUTIONS INCLUDED) -->
   <script src="app.js"></script>
   <script>
     lucide.createIcons();
