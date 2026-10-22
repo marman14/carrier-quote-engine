@@ -964,7 +964,7 @@ async function processDepositPayment() {
     console.warn('Payment endpoint fallback to simulated confirmation');
   }
 
-  // 2. Dual Automated Email Dispatch via Hostinger SMTP (Backend Section 3A)
+  // 2. Dual Automated Email Dispatch (Backend Section 3A)
   try {
     await fetch('/api/send-email', {
       method: 'POST',
@@ -1308,7 +1308,7 @@ async function resendEmailForBooking(bookingId) {
   }
 }
 
-async function testHostingerSmtp() {
+async function testDispatchEmail() {
   alert('Verifying automated dispatch email notification...');
   try {
     const res = await fetch('/api/send-email', {
